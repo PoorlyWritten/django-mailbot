@@ -1,0 +1,4 @@
+django-mailbot
+==============
+
+My mailbot

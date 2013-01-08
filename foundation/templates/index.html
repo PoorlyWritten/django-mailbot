@@ -13,9 +13,9 @@
 	<title>Welcome to Foundation</title>
 
 	<!-- Included CSS Files -->
-	<link rel="stylesheet" href="stylesheets/app.css">
+	<link rel="stylesheet" href="/stylesheets/app.css">
 
-	<script src="javascripts/foundation/modernizr.foundation.js"></script>
+	<script src="/javascripts/foundation/modernizr.foundation.js"></script>
 
 </head>
 <body>
@@ -39,6 +39,13 @@
         <ul class="right">
           <li class="divider show-for-medium-and-up"></li>
           <li class="has-dropdown">
+{% if not user.is_authenticated %}
+<a class="browserid-login" href="#">Sign In</a>
+<form method="POST" action="{% url browserid_verify %}">
+   {% csrf_token %}
+   {{ browserid_form.as_p }}
+</form>
+{% endif %}
             <a href="#">Item 2</a>
             <ul class="dropdown">
               <li><label>Section Name</label></li>
@@ -356,46 +363,47 @@
   </footer>
 
 	<!-- Included JS Files (Uncompressed) -->
-	<script src="javascripts/foundation/jquery.js"></script>
+	<script src="/javascripts/foundation/jquery.js"></script>
 	
-	<script src="javascripts/foundation/jquery.cookie.js"></script>
+	<script src="/javascripts/foundation/jquery.cookie.js"></script>
 	
-	<script src="javascripts/foundation/jquery.event.move.js"></script>
+	<script src="/javascripts/foundation/jquery.event.move.js"></script>
 	
-	<script src="javascripts/foundation/jquery.event.swipe.js"></script>
+	<script src="/javascripts/foundation/jquery.event.swipe.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.accordion.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.accordion.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.alerts.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.alerts.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.buttons.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.buttons.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.clearing.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.clearing.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.forms.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.forms.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.joyride.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.joyride.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.magellan.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.magellan.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.mediaQueryToggle.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.mediaQueryToggle.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.navigation.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.navigation.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.orbit.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.orbit.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.reveal.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.reveal.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.tabs.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.tabs.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.tooltips.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.tooltips.js"></script>
 	
-	<script src="javascripts/foundation/jquery.foundation.topbar.js"></script>
+	<script src="/javascripts/foundation/jquery.foundation.topbar.js"></script>
 	
-	<script src="javascripts/foundation/jquery.placeholder.js"></script>
+	<script src="/javascripts/foundation/jquery.placeholder.js"></script>
 	
 
   <!-- Application Javascript, safe to override -->
-  <script src="javascripts/foundation/app.js"></script>
+{{ browserid_form.media }}
+  <script src="/javascripts/foundation/app.js"></script>
 </body>
 </html>

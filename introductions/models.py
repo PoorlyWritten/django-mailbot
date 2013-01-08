@@ -9,7 +9,7 @@ class Introduction(models.Model):
     introducee1 = models.EmailField()
     introducee2 = models.EmailField()
     message = models.TextField()
-    email_message = models.ForeignKey('ParsedEmail', null=True, blank=True)
+    email_message = models.ForeignKey('email_integration.ParsedEmail', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
 class FollowUp(models.Model):

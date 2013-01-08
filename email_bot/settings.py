@@ -1,4 +1,4 @@
-# Django settings for oneleap_email_bot project.
+# Django settings for email_bot project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -97,10 +97,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'oneleap_email_bot.urls'
+ROOT_URLCONF = 'email_bot.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'oneleap_email_bot.wsgi.application'
+WSGI_APPLICATION = 'email_bot.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

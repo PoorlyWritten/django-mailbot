@@ -5,6 +5,10 @@ from django_extensions.db.fields import UUIDField
 # Create your models here.
 class Introduction(models.Model):
     id = UUIDField(primary_key=True, version=4)
+    connector = models.ForeignKey(User)
+    introducee1 = models.EmailField()
+    introducee2 = models.EmailField()
+    message = models.TextField()
     email_message = models.ForeignKey('ParsedEmail', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 

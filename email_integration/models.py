@@ -40,6 +40,7 @@ class RawEmail(models.Model):
     date_parsed = models.DateTimeField(null=True, blank=True)
     parsed = models.BooleanField(default=False)
 
+
 class EmailAddressManager(models.Manager):
     def get_or_create(self, email_address):
         normalized_email = isolate_email(email_address)
@@ -58,6 +59,8 @@ class EmailAddressManager(models.Manager):
             address_hash = None
         address = self.create(email_address=email_address,address_hash=address_hash)
         return address
+
+
 class EmailAddress(models.Model):
     id = UUIDField(primary_key=True, version=4)
     user_profile = models.ForeignKey(EmailProfile, null=True, blank=True)

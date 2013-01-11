@@ -1,5 +1,6 @@
 # Django settings for email_bot project.
 
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -108,6 +109,18 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/var/www/oneleap_email_bot-env/oneleap_email_bot/foundation/templates'
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    # ...
+    'django_browserid.context_processors.browserid_form',
+    # ...
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages"
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -117,6 +130,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
     'email_integration',
     'oneleap_mailer',
     'introductions',
@@ -127,11 +141,15 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    # ...
+    'django.contrib.auth.backends.ModelBackend',
     'django_browserid.auth.BrowserIDBackend',
     # ...
 )
 
+
+BROWSERID_CREATE_USER = True
+
+from logging.handlers import SysLogHandler
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -139,7 +157,7 @@ AUTHENTICATION_BACKENDS = (
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -150,17 +168,27 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'syslog':{
+            'level':'DEBUG',
+            'address': '/dev/log',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': SysLogHandler.LOG_USER,
+        },
     },
     'loggers': {
+           '': {
+            'handlers':['syslog'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'level': 'INFO',
             'propagate': True,
         },
     }
 }
-
 
 # Find any .conf files under a settings dir in the same basedir as settings.py
 # and import them.  This is processed before local_settings so that it can

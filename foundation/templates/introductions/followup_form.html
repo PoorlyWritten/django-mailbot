@@ -1,0 +1,211 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8" />
+
+	<!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>Welcome to Foundation</title>
+
+	<!-- Included CSS Files -->
+	<link rel="stylesheet" href="/stylesheets/app.css">
+
+	<script src="/javascripts/foundation/modernizr.foundation.js"></script>
+
+</head>
+<body>
+<div class="row">
+  <div class="twelve columns">
+    <nav class="top-bar">
+      <ul>
+        <!-- Title Area -->
+        <li class="name">
+          <h1>
+            <a href="#">
+              Introduction.es
+            </a>
+          </h1>
+        </li>
+        <li class="toggle-topbar"><a href="#"></a></li>
+      </ul>
+
+      <section>
+        <!-- Right Nav Section -->
+        <ul class="right">
+          <li class="divider show-for-medium-and-up"></li>
+          <li class="has-dropdown">
+            <a href="#">Item 2</a>
+            <ul class="dropdown">
+              <li><label>Section Name</label></li>
+              <li><a href="#" class="">Level 1</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li class="divider"></li>
+              <li><label>Section Name</label></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li class="divider"></li>
+              <li><a href="#">See all &rarr;</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </nav>
+  </div>
+</div>
+
+     <div class="row">
+ 
+    <!-- Contact Details -->
+    <div class="nine columns">
+ 
+      <h3>How did it go?</h3>
+      <p>{{ object.introduction.connector }} thought enough of you to recommend a connection for you to {{ object.other_email }}</p>
+      <p>You got introduced to someone.  I'll bet it was better than a seaside holiday, right?  Let me know how it went so that I can do a better job in the future.</p>
+
+          <ul class="accordion">
+            <li>
+              <div class="title">
+                <h5>Original Message from {{ object.introduction.connector }}</h5>
+              </div>
+              <div class="content">
+                  {{ object.introduction.message }}
+              </div>
+            </li>
+            {% if object.introduction.email_message %}
+            <li>
+              <div class="title">
+                <h5>Email Message</h5>
+              </div>
+              <div class="content">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+            </li>
+            <li>
+                <div class=title>
+                    <h5>Addresses</h5>
+                </div>
+                <div class="content">
+                    <p><strong>From:</strong>me@kevinrose.com</p>
+                    <p><strong>To:</strong>bill@microsoft.com</p>
+                    <p><strong>Cc:</strong>robyn.scott@oneleap.to</p>
+                    <p><strong>Bcc:</strong>introductions@oneleap.to</p>
+                </div>
+            </li>
+            {% endif %}
+          </ul>
+ 
+      <dl class="contained tabs">
+        <dd class="active"><a href="#contactForm">Feedback</a></dd>
+      </dl>
+ 
+      <ul class="tabs-content contained">
+        <li id="contactFormTab" class="active">
+          <form  method="post">
+              {% csrf_token %}
+                <div class="row collapse">
+                    <div class="two columns"> {{ form.name.label_tag }}</div>
+                    <div class="ten columns">{{ form.name|add_error_class:"error" }}
+                    {% for error in form.name.errors %}
+                        <small class=error>{{ error }}</small>
+                    {% endfor %}
+                    </div>
+                </div>
+                <div class="row collapse">
+                    <div class="two columns"> {{ form.email.label_tag }}</div>
+                    <div class="ten columns">{{ form.email|add_error_class:"error" }}
+                    {% for error in form.email.errors %}
+                        <small class=error>{{ error }}</small>
+                    {% endfor %}
+                    </div>
+                </div>
+                <label>How did it go?</label>
+                {{ form.comment|attr:"rows:4"|add_error_class:"error" }}
+                {% for error in form.comment.errors %}
+                    <small class=error>{{ error }}</small>
+                {% endfor %}
+            <button type="submit" class="radius button">Submit</button>
+            </form>
+        </li>
+      </ul>
+ 
+    </div>
+ 
+ 
+ 
+  
+  <!-- Footer -->
+  
+  <footer class="row">
+    <div class="twelve columns">
+      <hr />
+      <div class="row">
+        <div class="six columns">
+          <p>&copy; Copyright OneLeap Ltd 2013</p>
+        </div>
+        <div class="six columns">
+          <ul class="link-list right">
+            <li><a href="#">Section 1</a></li>
+            <li><a href="#">Section 2</a></li>
+            <li><a href="#">Section 3</a></li>
+            <li><a href="#">Section 4</a></li>
+            <li><a href="#">Section 5</a></li>
+            <li><a href="#">Section 6</a></li>
+          </ul>
+        </div>
+      </div>
+    </div> 
+  </footer>
+
+	<!-- Included JS Files (Uncompressed) -->
+	<script src="/javascripts/foundation/jquery.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.cookie.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.event.move.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.event.swipe.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.accordion.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.alerts.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.buttons.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.clearing.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.forms.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.joyride.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.magellan.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.mediaQueryToggle.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.navigation.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.orbit.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.reveal.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.tabs.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.tooltips.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.foundation.topbar.js"></script>
+	
+	<script src="/javascripts/foundation/jquery.placeholder.js"></script>
+	
+
+  <!-- Application Javascript, safe to override -->
+  <script src="/javascripts/foundation/app.js"></script>
+</body>
+</html>

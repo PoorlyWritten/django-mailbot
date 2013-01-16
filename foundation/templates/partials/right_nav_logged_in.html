@@ -1,0 +1,17 @@
+            <a href="#">Settings</a>
+            <ul class="dropdown">
+              <li><label>Email Addresses</label></li>
+              {% if my_addrs %}
+              {% for addr in my_addrs %}
+              <li><a href=#>{{ addr.email_address }}</a></li>
+              {% endfor %}
+              {% endif %}
+              <li><a href="/verify">Verify Another</a></li>
+              <li class="divider"></li>
+              <li><label>Section Name</label></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li><a href="#">Dropdown Option</a></li>
+              <li class="divider"></li>
+              <li><a href="#">See all &rarr;</a></li>
+            </ul>

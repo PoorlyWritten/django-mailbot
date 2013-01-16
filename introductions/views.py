@@ -4,25 +4,36 @@ from django.views.generic import ListView, UpdateView
 from .models import Introduction, FollowUp
 from .forms import FollowUpForm
 
-class IntroductionDetailMixin(object):
+class OLContextMixin(object):
+    """
+    A default context mixin that passes the keyword arguments received by
+    get_context_data as the template context.
+    """
+
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(IntroductionDetailMixin, self).get_context_data(**kwargs)
+        context = super(OLContextMixin, self).get_context_data(**kwargs)
         try:
-            logger.debug(self.__dict__)
-        except:
+            context['heading'] = self.heading
+            logger.debug("Adding heading to context")
+        except AttributeError:
             pass
-        logger.debug("context=%s" % context)
         return context
 
-class IntroductionList(ListView):
+class IntroductionList(OLContextMixin, ListView):
+    #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
     model = Introduction
+    heading = "Track your introductions"
 
-class FollowUpUpdate(UpdateView):
+    def get_queryset(self):
+        return Introduction.objects.filter(connector = self.request.user)
+
+
+class FollowUpUpdate(UpdateView, OLContextMixin):
     model = FollowUp
     form_class = FollowUpForm
     slug_field = 'custom_url'
     success_url = "/introductions"
+    heading = "How did it go?"
 
     def get_object(self,queryset=None):
         logger.debug("In get_object")

@@ -17,9 +17,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^introductions/', include('introductions.urls')),
+    url(r'', include('email_integration.urls')),
     (r'^browserid/', include('django_browserid.urls')),
     (r'^index/', TemplateView.as_view(template_name="index.html")),
-#    (r'^feedback/', TemplateView.as_view(template_name="feedback.html")),
     (r'^home/', TemplateView.as_view(template_name="home.html")),
     (r'^logout$', logout_then_login),
 )

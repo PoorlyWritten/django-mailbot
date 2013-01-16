@@ -9,6 +9,7 @@ def gen_short_url(length):
     digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
     return ''.join([digits[random.randint(0,len(digits))] for x in range(0,length)])
 
+
 class NullableCharField(models.CharField):
     description = "CharField that obeys null=True"
 
@@ -39,7 +40,6 @@ class FollowUpManager(models.Manager):
         return self.create(**kwargs)
 
 
-
 class FollowUp(models.Model):
     id = UUIDField(primary_key=True, version=4)
     name = NullableCharField(max_length=128, null=True)
@@ -60,6 +60,34 @@ class FollowUp(models.Model):
     def __unicode__(self):
         return "Feedback from %s for %s" % (self.email, self.introduction)
 
+class IntroductionManager(models.Manager):
+    def create_from_parsedmail(self, parsed_mail):
+        intro = Introduction(email_message = parsed_mail,
+            connector = parsed_mail.from_email.all()[0].user_profile.user,
+            subject = parsed_mail.subject,
+            message = parsed_mail.content,
+                             )
+        introducee1 = None
+        introducee2 = None
+        recipients = []
+        recipients.extend(parsed_mail.to_email.all())
+        recipients.extend(parsed_mail.cc_email.all())
+        for each in recipients:
+            if each.email_address != parsed_mail.delivered_to:
+                if not introducee1:
+                    introducee1 = each
+                    continue
+                if not introducee2:
+                    introducee2 = each
+                    continue
+        intro.introducee1 = introducee1
+        intro.introducee2 = introducee2
+        intro.save()
+
+        #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
+
+
+
 class Introduction(models.Model):
     id = UUIDField(primary_key=True, version=4)
     connector = models.ForeignKey(User)
@@ -67,8 +95,9 @@ class Introduction(models.Model):
     introducee2 = models.EmailField()
     subject = NullableCharField(max_length=128, null=True, blank=True)
     message = models.TextField()
-    email_message = models.ForeignKey('email_integration.ParsedEmail', null=True, blank=True)
+    email_message = models.ForeignKey('email_integration.ParsedEmail', null=True, blank=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
+    objects = IntroductionManager()
 
     def __unicode__(self):
         return u'%s introduced %s to %s' % (self.connector, self.introducee1, self.introducee2)

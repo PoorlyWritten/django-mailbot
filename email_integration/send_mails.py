@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import TemplateDoesNotExist, get_template, Context, render_to_string
+from django.template.loader import TemplateDoesNotExist, get_template, Context
 
 def _render_template(template_name, **context):
     try:
@@ -26,3 +26,20 @@ def send_verification_email(to_email,anon_hash,template='user_emails/verificatio
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def request_feedback_email(to_email, connector_name, link):
+    subject, from_email, to = 'How did the introduction help you?', '%s via introduction.es <my@introduction.es>' % connector_name, to_email
+    text_content = "%s want's to know how the introduction went.\n\nDid it lead to something already or is it still building?\n%s\n-%s" % (connector_name, link, connector_name)
+    html_content = "<p>%s want's to know how the introduction went.</p><p>Did it lead to something already or is it still building?</p><p><a href=\"%s\">%s</a></p><p>-%s" % (connector_name, link, link, connector_name)
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    logger.debug("trying to send message to %s about %s " % (msg.to, msg.subject))
+    logger.debug(msg.message())
+    try:
+        msg.send()
+    except Exception, error:
+        logger.debug("Couldn't send the mail for %s" % error)
+        logger.debug(msg.subject)
+        logger.debug(msg.recipients())
+        logger.debug(msg.message())
+

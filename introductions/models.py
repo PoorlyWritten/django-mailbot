@@ -3,7 +3,9 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
+from email_integration.send_mails import request_feedback_email
 import random
+import datetime
 
 def gen_short_url(length):
     digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
@@ -34,7 +36,7 @@ class FollowUpManager(models.Manager):
                 found = [x.custom_url for x in self.filter(custom_url__in=url_candidates)]
                 candidates = set(url_candidates).symmetric_difference(set(found))
                 if len(candidates) > 0:
-                    kwargs['custom_url'] = candidates[0]
+                    kwargs['custom_url'] = list(candidates)[0]
                     return self.create(**kwargs)
             return None # This is statistically improbable
         return self.create(**kwargs)
@@ -60,32 +62,13 @@ class FollowUp(models.Model):
     def __unicode__(self):
         return "Feedback from %s for %s" % (self.email, self.introduction)
 
-class IntroductionManager(models.Manager):
-    def create_from_parsedmail(self, parsed_mail):
-        intro = Introduction(email_message = parsed_mail,
-            connector = parsed_mail.from_email.all()[0].user_profile.user,
-            subject = parsed_mail.subject,
-            message = parsed_mail.content,
-                             )
-        introducee1 = None
-        introducee2 = None
-        recipients = []
-        recipients.extend(parsed_mail.to_email.all())
-        recipients.extend(parsed_mail.cc_email.all())
-        for each in recipients:
-            if each.email_address != parsed_mail.delivered_to:
-                if not introducee1:
-                    introducee1 = each
-                    continue
-                if not introducee2:
-                    introducee2 = each
-                    continue
-        intro.introducee1 = introducee1
-        intro.introducee2 = introducee2
-        intro.save()
-
-        #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
-
+    def request_feedback(self):
+        to_email = self.email
+        connector_name = self.introduction.connector.get_full_name() or self.introduction.from_name
+        link = "http://introduction.es/feedback/%s" % self.custom_url
+        request_feedback_email(to_email, connector_name, link)
+        self.requested = datetime.datetime.utcnow()
+        self.save()
 
 
 class Introduction(models.Model):
@@ -97,10 +80,13 @@ class Introduction(models.Model):
     message = models.TextField()
     email_message = models.ForeignKey('email_integration.ParsedEmail', null=True, blank=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
-    objects = IntroductionManager()
 
     def __unicode__(self):
         return u'%s introduced %s to %s' % (self.connector, self.introducee1, self.introducee2)
+
+    @property
+    def from_name(self):
+       return self.email_message.sent_by_name
 
     def create_followups(self):
         try:
@@ -114,4 +100,10 @@ class Introduction(models.Model):
             logger.debug(error)
             pass
 
+from django.db.models.signals import post_save
 
+def create_followups(sender, **kwargs):
+    instance = kwargs['instance']
+    instance.create_followups()
+
+post_save.connect(create_followups, sender=Introduction)

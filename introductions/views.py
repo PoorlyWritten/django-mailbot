@@ -1,34 +1,51 @@
 import logging
 logger = logging.getLogger(__name__)
-from django.views.generic import ListView, UpdateView
+from django.views.generic import ListView, UpdateView, DetailView
 from .models import Introduction, FollowUp
 from .forms import FollowUpForm
+from email_bot.views import OLContextMixin
 
-class OLContextMixin(object):
-    """
-    A default context mixin that passes the keyword arguments received by
-    get_context_data as the template context.
-    """
-
-    def get_context_data(self, **kwargs):
-        context = super(OLContextMixin, self).get_context_data(**kwargs)
-        try:
-            context['heading'] = self.heading
-            logger.debug("Adding heading to context")
-        except AttributeError:
-            pass
-        return context
-
-class IntroductionList(OLContextMixin, ListView):
+class IntroductionListView(OLContextMixin, ListView):
     #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
-    model = Introduction
+    #model = Introduction
     heading = "Track your introductions"
 
     def get_queryset(self):
+        logger.debug("Returning filtered introductions made by %s" % self.request.user)
         return Introduction.objects.filter(connector = self.request.user)
 
+class IntroductionDetailView(OLContextMixin, DetailView):
+    model = Introduction
+    slug_field='id'
 
-class FollowUpUpdate(UpdateView, OLContextMixin):
+    def get_queryset(self):
+        logger.debug("Returning filtered introductions made by %s" % self.request.user)
+        return Introduction.objects.filter(connector = self.request.user)
+
+class IntroductionNotificationRequestView(OLContextMixin, DetailView):
+    template_name = 'introduction/notify.html'
+    heading = "Email Requests Sent!"
+    model = Introduction
+    slug_field='id'
+
+    def get_queryset(self):
+        logger.debug("Returning filtered introductions made by %s" % self.request.user)
+        return Introduction.objects.filter(connector = self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        for each in self.object.followup_set.all():
+            try:
+                each.request_feedback()
+            except Exception, e:
+                logger.debug("Couldn't send feedback request because: %s" % e)
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+
+
+
+class FollowUpUpdate(OLContextMixin, UpdateView):
     model = FollowUp
     form_class = FollowUpForm
     slug_field = 'custom_url'

@@ -26,7 +26,7 @@
         <!-- Title Area -->
         <li class="name">
           <h1>
-            <a href="#">
+            <a href="/">
               Introduction.es
             </a>
           </h1>
@@ -37,14 +37,15 @@
         <!-- Right Nav Section -->
         <ul class="right">
           <li class="divider show-for-medium-and-up"></li>
-          <li class="has-dropdown">
 {% if not user.is_authenticated %}
+          <li>
 <a class="browserid-login" href="#">Sign In</a>
 <form method="POST" action="{% url browserid_verify %}">
    {% csrf_token %}
    {{ browserid_form.as_p }}
 </form>
 {% else %}
+          <li class="has-dropdown">
 {% include 'partials/right_nav_logged_in.html' %}
 {% endif %}
           </li>
@@ -128,6 +129,7 @@
 
   <!-- Application Javascript, safe to override -->
 {{ browserid_form.media }}
+  <script src="/javascripts/foundation/browserid.js"></script>
   <script src="/javascripts/foundation/app.js"></script>
 </body>
 </html>

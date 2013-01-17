@@ -1,11 +1,12 @@
 import logging
 logger = logging.getLogger(__name__)
-from django.db import models
+from django.db import models, IntegrityError
 from django_extensions.db.fields import UUIDField
 from django.db import transaction
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from introductions.models import Introduction
 import datetime
 import email
 import hashlib
@@ -28,6 +29,12 @@ def isolate_email(address):
         m = re.match(r"%s" % regex, address)
         if m:
             return m.group('email').lstrip().rstrip()
+    return None
+
+def isolate_name(address):
+    m = re.match("(?P<name>[^<].*)<(?P<email>.*)>", address)
+    if m:
+        return m.group('name').lstrip().rstrip()
     return None
 
 
@@ -74,9 +81,51 @@ class RawEmail(models.Model):
     date_parsed = models.DateTimeField(null=True, blank=True)
     parsed = models.BooleanField(default=False)
     parsed_emails = models.BooleanField(default=False)
+    msg = None
 
     def __unicode__(self):
         return u'raw email received at %s' % self.date_added
+
+    def _get_header(self, header_name):
+        if not self.msg:
+            self.msg = email.message_from_string(self.content)
+        return self.msg.get(header_name, '')
+
+    @property
+    def to(self):
+        return self._get_header('To')
+    @property
+    def from_addr(self):
+        return self._get_header('From')
+    @property
+    def cc(self):
+        return self._get_header('Cc')
+    @property
+    def bcc(self):
+        return self._get_header('Bcc')
+    @property
+    def delivered_to(self):
+        return self._get_header('Delivered-To')
+    @property
+    def message_id(self):
+        return self._get_header('Message-ID')
+    @property
+    def subject(self):
+        return self._get_header('Subject')
+    @property
+    def payload(self):
+        if not self.msg:
+            self.msg = email.message_from_string(self.content)
+        if self.msg.is_multipart():
+            content = u''
+            for part in self.msg.walk():
+                if part.get_content_type() == 'text/plain':
+                    content = u'%s\n%s' % (content, unicode(part))
+        else:
+            content = self.msg.get_payload()
+        return content
+
+
 
 
 class EmailAddressManager(models.Manager):
@@ -160,7 +209,19 @@ class ParsedEmail(models.Model):
     @property
     def delivered_to(self):
         msg = email.message_from_string(self.raw_message.content)
-        return msg.get('Delivered-To','').replace('\n', '').replace('\t', '')
+        return msg.get('Delivered-To','').replace('\n', '').replace('\t', '').lstrip().rstrip()
+
+    @property
+    def sent_by_name(self):
+        msg = email.message_from_string(self.raw_message.content)
+        from_addr = msg.get('From','').replace('\n', '').replace('\t', '').lstrip().rstrip()
+        from_name = isolate_name(from_addr)
+        from_email = isolate_email(from_addr)
+        if from_name:
+            return from_name
+        if from_email:
+            return from_email
+        return "An Introducion.es User"
 
 
     @transaction.commit_manually
@@ -174,8 +235,6 @@ class ParsedEmail(models.Model):
             except:
                 transaction.rollback()
         transaction.rollback()
-
-
 
 
     def _parse_email_addresses(self):
@@ -192,6 +251,31 @@ class ParsedEmail(models.Model):
             self._tx_add_email_address('cc_email', each)
         for each in bcc_addresses:
             self._tx_add_email_address('bcc_email', each)
+
+    def create_introduction(self):
+        intro = Introduction(email_message = self,
+            connector = self.from_email.all()[0].user_profile.user,
+            subject = self.subject,
+            message = self.content,
+                             )
+        introducee1 = None
+        introducee2 = None
+        recipients = []
+        recipients.extend(self.to_email.all())
+        recipients.extend(self.cc_email.all())
+        for each in recipients:
+            if each.email_address != self.delivered_to:
+                if not introducee1:
+                    introducee1 = each
+                    continue
+                if not introducee2:
+                    introducee2 = each
+                    continue
+        intro.introducee1 = introducee1
+        intro.introducee2 = introducee2
+        intro.save()
+
+        #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
 
 
 from django.db.models.signals import post_save
@@ -212,7 +296,15 @@ def extract_emails(sender, *args, **kwargs):
     if not instance.raw_message.parsed_emails:
         parse_email_from_mail(instance.id)
 
+def create_introduction(sender, **kwargs):
+    instance = kwargs['instance']
+    try:
+        instance.create_introduction()
+    except IntegrityError:
+        pass
 
-post_save.connect(test_signal_handler)
+
+#post_save.connect(test_signal_handler)
 post_save.connect(parse_mail, sender=RawEmail)
 post_save.connect(extract_emails, sender=ParsedEmail)
+post_save.connect(create_introduction, sender=ParsedEmail)

@@ -8,6 +8,7 @@ from celery.task import periodic_task
 from celery import task
 from django.db import IntegrityError
 from django.db import transaction
+import datetime
 
 try:
     BOT_CONFIG = settings.EMAIL_BOT_CONF
@@ -48,16 +49,24 @@ def _tx_create_raw_message(content):
 
 @periodic_task(run_every=crontab(minute="*/5"))
 def parse_all_mail():
-    for each in RawEmail.objects.filter(parsed=False):
+    unparsed_mail = RawEmail.objects.filter(parsed=False)
+    logger.debug("Processing %d unparsed raw emails" % len(unparsed_mail))
+    for each in unparsed_mail:
+        logger.debug("Parsing Raw Email :  %s" % each.pk)
         parse_one_mail(each.pk)
 
 
 @task()
 def parse_one_mail(raw_message_id):
+    raw_message=RawEmail.objects.get(pk=raw_message_id)
     try:
-        ParsedEmail.objects.create_parsed_email(raw_message=RawEmail.objects.get(pk=raw_message_id))
+        ParsedEmail.objects.create_parsed_email(raw_message = raw_message)
     except IntegrityError,e:
         logger.debug("couldn't create a parsed email because: %s" % e)
+        raw_message.date_parsed = datetime.datetime.utcnow()
+        raw_message.parsed = True
+        raw_message.save()
+
 
 @task()
 def parse_email_from_mail(parsed_email_id):

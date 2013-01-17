@@ -168,6 +168,10 @@ LOGGING = {
         }
     },
     'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -186,13 +190,16 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'INFO',
-            'propagate': True,
+        'django.db.backends': {
+            'handlers': ['null'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     }
 }
+
+LOGIN_REDIRECT_URL = "/introductions"
+LOGIN_URL = "/"
 
 # Find any .conf files under a settings dir in the same basedir as settings.py
 # and import them.  This is processed before local_settings so that it can

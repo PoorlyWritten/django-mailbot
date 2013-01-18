@@ -1,15 +1,12 @@
 import logging
 logger = logging.getLogger(__name__)
-from django.db import models
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
 from email_integration.send_mails import request_feedback_email
-import random
+from email_integration.models import RawEmail, EmailAddress
 import datetime
-
-def gen_short_url(length):
-    digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
-    return ''.join([digits[random.randint(0,len(digits))] for x in range(0,length)])
+import os
 
 
 class NullableCharField(models.CharField):
@@ -26,22 +23,6 @@ class NullableCharField(models.CharField):
         return value or ""
 
 
-class FollowUpManager(models.Manager):
-    def create_followup(self,**kwargs):
-        if 'custom_url' not in kwargs:
-            url_candidates = []
-            for x in range(1,10):
-                for x in range(1,10):
-                    url_candidates.append(gen_short_url(random.randint(5,12)))
-                found = [x.custom_url for x in self.filter(custom_url__in=url_candidates)]
-                candidates = set(url_candidates).symmetric_difference(set(found))
-                if len(candidates) > 0:
-                    kwargs['custom_url'] = list(candidates)[0]
-                    return self.create(**kwargs)
-            return None # This is statistically improbable
-        return self.create(**kwargs)
-
-
 class FollowUp(models.Model):
     id = UUIDField(primary_key=True, version=4)
     name = NullableCharField(max_length=128, null=True)
@@ -54,7 +35,6 @@ class FollowUp(models.Model):
     comment = models.TextField(null=True,blank=True)
     requested = models.DateTimeField(null=True, blank=True)
     added = models.DateTimeField(null=True, blank=True)
-    objects = FollowUpManager()
 
     class Meta:
         unique_together = ('introduction', 'email')
@@ -65,10 +45,54 @@ class FollowUp(models.Model):
     def request_feedback(self):
         to_email = self.email
         connector_name = self.introduction.connector.get_full_name() or self.introduction.from_name
-        link = "http://introduction.es/feedback/%s" % self.custom_url
+        link = "http://introduction.es/introductions/feedback/%s" % self.custom_url
         request_feedback_email(to_email, connector_name, link)
         self.requested = datetime.datetime.utcnow()
         self.save()
+
+
+class IntroductionManager(models.Manager):
+    def create_introduction(self, raw_email):
+        from_email = raw_email.isolated_from_addr
+        connector = None
+        try:
+            connector = User.objects.get(email=from_email)
+        except User.DoesNotExist:
+            pass
+        if not connector:
+            try:
+                connector = EmailAddress.objects.get(email_address=from_email).user_profile.user
+            except (EmailAddress.DoesNotExist, AttributeError):
+                pass
+        if not connector:
+            # This came from an unregistered user
+            # TODO: Send welcome email and invite to join
+            return None
+        introducee1 = None
+        introducee2 = None
+        recipients = []
+        recipients.extend(raw_email.isolated_to)
+        recipients.extend(raw_email.isolated_cc)
+        for each in recipients:
+            if each != raw_email.isolated_delivered_to:
+                if not introducee1:
+                    introducee1 = each
+                    continue
+                if not introducee2:
+                    introducee2 = each
+                    continue
+        intro = Introduction(
+            connector = connector,
+            email_message = raw_email,
+            subject = raw_email.subject,
+            message = raw_email.payload,
+            introducee1 = introducee1,
+            introducee2 = introducee2
+        )
+        intro.save()
+        logger.debug("Just created an introduction.  It's pk is : %s" % intro.pk)
+        return intro
+
 
 
 class Introduction(models.Model):
@@ -78,8 +102,9 @@ class Introduction(models.Model):
     introducee2 = models.EmailField()
     subject = NullableCharField(max_length=128, null=True, blank=True)
     message = models.TextField()
-    email_message = models.ForeignKey('email_integration.ParsedEmail', null=True, blank=True, unique=True)
+    email_message = models.ForeignKey('email_integration.RawEmail', null=True, blank=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
+    objects = IntroductionManager()
 
     def __unicode__(self):
         return u'%s introduced %s to %s' % (self.connector, self.introducee1, self.introducee2)
@@ -89,21 +114,62 @@ class Introduction(models.Model):
        return self.email_message.sent_by_name
 
     def create_followups(self):
-        try:
-            FollowUp.objects.create_followup(email=self.introducee1, other_email=self.introducee2, introduction=self)
-        except Exception, error:
-            logger.debug(error)
-            pass
-        try:
-            FollowUp.objects.create_followup(email=self.introducee2, other_email=self.introducee1, introduction=self)
-        except Exception, error:
-            logger.debug(error)
-            pass
+        logger.debug('working with introduction: %s' % self.pk)
+        logger.debug('creating a followup for %s' % self.introducee1)
+        followup1 = FollowUp(
+            email=self.introducee1,
+            other_email=self.introducee2,
+            introduction=self,
+            custom_url=os.urandom(32).encode('hex')
+        )
+        followup1.save()
+        followup2 = FollowUp(
+            email=self.introducee2,
+            other_email=self.introducee1,
+            introduction=self,
+            custom_url=os.urandom(32).encode('hex')
+        )
+        followup2.save()
+
+def parse_one_mail(raw_message_id):
+    logger.debug("parse_one_mail was called...")
+    raw_message=RawEmail.objects.get(pk=raw_message_id)
+    try:
+        intro = Introduction.objects.create_introduction(raw_email = raw_message)
+        raw_message.date_parsed = datetime.datetime.utcnow()
+        raw_message.parsed = True
+        raw_message.save()
+        return intro
+    except IntegrityError,e:
+        logger.debug("couldn't create an introduction because: %s" % e)
+        return None
+
+def create_followups(intro_pk):
+    logger.debug("create_followups was called...")
+    try:
+        intro = Introduction.objects.get(pk=intro_pk)
+        intro.create_followups()
+    except Introduction.DoesNotExist:
+        pass
+
 
 from django.db.models.signals import post_save
 
-def create_followups(sender, **kwargs):
+def parse_mail(sender,**kwargs):
+    #{'raw': False, 'instance': <RawEmail: raw email received at 2013-01-15 15:37:39+00:00>, 'signal': <django.dispatch.dispatcher.Signal object at 0x34dd350>, 'using': 'default', 'created': False}
+    instance = kwargs['instance']
+    logger.debug("In parse_mail where instance.pk = %s" % instance.pk)
+    if not instance.parsed:
+        parse_one_mail(instance.pk)
+
+def assert_followup(sender, **kwargs):
     instance = kwargs['instance']
     instance.create_followups()
 
-post_save.connect(create_followups, sender=Introduction)
+def test_signal_handler(sender, **kwargs):
+    logger.debug('test_signal_handler - sender = %s' % sender)
+    logger.debug('test_signal_handler - instance = %s' % kwargs['instance'])
+
+#post_save.connect(test_signal_handler)
+post_save.connect(parse_mail, sender=RawEmail)
+post_save.connect(assert_followup, sender=Introduction)

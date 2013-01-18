@@ -6,7 +6,6 @@ from .forms import FollowUpForm
 from email_bot.views import OLContextMixin
 
 class IntroductionListView(OLContextMixin, ListView):
-    #ParsedEmail.objects.filter(from_email__user_profile__user__id = me.id)
     #model = Introduction
     heading = "Track your introductions"
 
@@ -34,6 +33,7 @@ class IntroductionNotificationRequestView(OLContextMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        self.object.create_followups()
         for each in self.object.followup_set.all():
             try:
                 each.request_feedback()

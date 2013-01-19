@@ -8,80 +8,15 @@
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="nine columns centered">
       
-        {% for obj in object_list %}
+        {% for object in object_list %}
       <!-- Feed Entry -->
       <div class="row">
-          <div class="two columns mobile-one"><div class=row><img src="http://placehold.it/80x80&text=[img]" /></div><div class=row>{{ obj.created }}</div></div>
-        <div class="eight columns">
-            <p><strong>You introduced {{ obj.introducee1 }} to {{ obj.introducee2 }}</strong><br /> </p>
-          <p><span class="round label">Work</span><span class="round label">Investment</span><span class="round label">Important</span></p>
-          <ul class="accordion">
-            <li>
-              <div class="title">
-                <h5>Message</h5>
-              </div>
-              <div class="content">
-                  {{ obj.message|linebreaks }}
-              </div>
-            </li>
-            {% if obj.email_message %}
-            <li>
-              <div class="title">
-                <h5>Email Message</h5>
-              </div>
-              <div class="content">
-                  <pre>
-                  {{ obj.email_message.content}}
-                  </pre>
-              </div>
-            </li>
-            <li>
-                <div class=title>
-                    <h5>Addresses</h5>
-                </div>
-                <div class="content">
-                    {% for each in obj.email_message.from_email.all %}
-                    <p><strong>From:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in obj.email_message.to_email.all %}
-                    <p><strong>To:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in obj.email_message.cc_email.all %}
-                    <p><strong>Cc:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in obj.email_message.bcc_email.all %}
-                    <p><strong>Bcc:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                </div>
-            </li>
-            {% endif %}
-          </ul>
-          <ul class="link-list">
-              <li><a href="/introductions/{{ obj.pk }}">Detail</a></li>
-            <li><a href="">Comment</a></li>
-            <li><a href="">Share</a></li>
-          </ul>
-          
-          {% if obj.followup_set.all %}
-          <h6>Feedback</h6>
-          {% for feedback in obj.followup_set.all %}
-          {% if feedback.comment %}
-          <div class="row">
-              <div class="two columns mobile-one"><img src="http://placehold.it/50x50&text=[img]" />{{ feedback.created }}</div>
-            <div class="ten columns"><p>{{ feedback.comment }}</p></div>
-          </div>
-          {% endif %}
-          {% endfor %}
-          {% endif %}
-        </div>
-        <div class="two columns mobile-one"></i><img src="http://placehold.it/80x80&text=[img]" /></div>
+          {% include 'introductions/_introduction_item.html' %}
       </div>
       <!-- End Feed Entry -->
       <hr />
       {% endfor %}
     </div>
-    
-    
   </div>
     
   {% endblock %}

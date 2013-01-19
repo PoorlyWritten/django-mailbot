@@ -4,70 +4,7 @@
 {% block content %}
 
 <div class="row">    
-          <div class="two columns mobile-one"><div class=row><img src="http://placehold.it/80x80&text=[img]" /></div><div class=row>{{ object.created }}</div></div>
-        <div class="eight columns">
-            <p><strong>You introduced {{ object.introducee1 }} to {{ object.introducee2 }}</strong><br /> </p>
-          <p><span class="round label">Work</span><span class="round label">Investment</span><span class="round label">Important</span></p>
-          <ul class="accordion">
-            <li>
-              <div class="title">
-                <h5>Message</h5>
-              </div>
-              <div class="content">
-                  {{ object.message|linebreaks }}
-              </div>
-            </li>
-            {% if object.email_message %}
-            <li>
-              <div class="title">
-                <h5>Email Message</h5>
-              </div>
-              <div class="content">
-                  <pre>
-                  {{ object.email_message.content}}
-                  </pre>
-              </div>
-            </li>
-            <li>
-                <div class=title>
-                    <h5>Addresses</h5>
-                </div>
-                <div class="content">
-                    {% for each in object.email_message.from_email.all %}
-                    <p><strong>From:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in object.email_message.to_email.all %}
-                    <p><strong>To:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in object.email_message.cc_email.all %}
-                    <p><strong>Cc:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                    {% for each in object.email_message.bcc_email.all %}
-                    <p><strong>Bcc:</strong> {{ each.email_address }}</p>
-                    {% endfor %}
-                </div>
-            </li>
-            {% endif %}
-          </ul>
-          <ul class="link-list">
-              <li><a href="/introductions/{{ object.pk }}/notify">Request Feedback</a></li>
-            <li><a href="">Comment</a></li>
-            <li><a href="">Share</a></li>
-          </ul>
-          
-          {% if object.followup_set.all %}
-          <h6>Feedback</h6>
-          {% for feedback in object.followup_set.all %}
-          {% if feedback.comment %}
-          <div class="row">
-              <div class="two columns mobile-one"><img src="http://placehold.it/50x50&text=[img]" />{{ feedback.created }}</div>
-            <div class="ten columns"><p>{{ feedback.comment }}</p></div>
-          </div>
-          {% endif %}
-          {% endfor %}
-          {% endif %}
-        </div>
-        <div class="two columns mobile-one"></i><img src="http://placehold.it/80x80&text=[img]" /></div>
+    {% include 'introductions/_introduction_item.html' %}
 </div>
     
   {% endblock %}

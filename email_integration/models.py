@@ -42,8 +42,8 @@ def _tx_create_email_address(addr):
         address, created = EmailAddress.objects.get_or_create_email(addr)
         address.save()
         transaction.commit()
-    except ValidationError:
-        print "We've got an address validation problem here: %s" % addr
+    except ValidationError, error:
+        print "We've got an address validation problem here for %s : %s" % (addr,error)
         transaction.rollback()
         address = None
     return address
@@ -86,7 +86,7 @@ class RawEmail(models.Model):
     def _get_header(self, header_name):
         if not self.msg:
             self.msg = email.message_from_string(self.content)
-        return self.msg.get(header_name, '')
+        return self.msg.get(header_name, '').replace('\n','').lstrip().rstrip()
 
     @property
     def to(self):
@@ -126,7 +126,7 @@ class RawEmail(models.Model):
         return isolate_email(self.from_addr)
     @property
     def isolated_to(self):
-        return [isolate_email(x) for x in self.to.split(',')]
+        return [isolate_email(x).lstrip().rstrip() for x in self.to.split(',') if x != '']
     @property
     def isolated_cc(self):
         return [isolate_email(x) for x in self.cc.split(',')]
@@ -142,13 +142,13 @@ class RawEmail(models.Model):
 
     def create_emails(self):
         for each in self.isolated_to:
-            logger.debug("working with recipient: %s" % each)
+            logger.debug("working with recipient: '%s'" % each)
             _tx_create_email_address(each)
         for each in self.isolated_bcc:
-            logger.debug("working with recipient: %s" % each)
+            logger.debug("working with recipient: '%s'" % each)
             _tx_create_email_address(each)
         for each in self.isolated_cc:
-            logger.debug("working with recipient: %s" % each)
+            logger.debug("working with recipient: '%s'" % each)
             _tx_create_email_address(each)
         _tx_create_email_address(self.isolated_from_addr)
 

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
 from email_integration.send_mails import request_feedback_email
 from email_integration.models import RawEmail, EmailAddress
+from djangoratings.fields import AnonymousRatingField
 import datetime
 import os
 
@@ -22,6 +23,21 @@ class NullableCharField(models.CharField):
             return value
         return value or ""
 
+    def get_internal_type(self):
+        return "CharField"
+
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South"
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+
+class FollowUpManager(models.Manager):
+    def commented(self):
+        return super(FollowUpManager, self).all().exclude(comment=None)
 
 class FollowUp(models.Model):
     id = UUIDField(primary_key=True, version=4)
@@ -34,7 +50,9 @@ class FollowUp(models.Model):
     custom_url = NullableCharField(max_length=64, unique=True, null=True)
     comment = models.TextField(null=True,blank=True)
     requested = models.DateTimeField(null=True, blank=True)
-    added = models.DateTimeField(null=True, blank=True)
+    added = models.DateTimeField(auto_now=True)
+    rating = AnonymousRatingField(range=10)
+    objects = FollowUpManager()
 
     class Meta:
         unique_together = ('introduction', 'email')
@@ -114,22 +132,26 @@ class Introduction(models.Model):
        return self.email_message.sent_by_name
 
     def create_followups(self):
-        logger.debug('working with introduction: %s' % self.pk)
-        logger.debug('creating a followup for %s' % self.introducee1)
         followup1 = FollowUp(
             email=self.introducee1,
             other_email=self.introducee2,
             introduction=self,
             custom_url=os.urandom(32).encode('hex')
         )
-        followup1.save()
+        try:
+            followup1.save()
+        except IntegrityError:
+            pass
         followup2 = FollowUp(
             email=self.introducee2,
             other_email=self.introducee1,
             introduction=self,
             custom_url=os.urandom(32).encode('hex')
         )
-        followup2.save()
+        try:
+            followup2.save()
+        except IntegrityError:
+            pass
 
 def parse_one_mail(raw_message_id):
     logger.debug("parse_one_mail was called...")

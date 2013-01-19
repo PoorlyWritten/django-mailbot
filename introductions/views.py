@@ -36,6 +36,7 @@ class IntroductionNotificationRequestView(OLContextMixin, DetailView):
         self.object.create_followups()
         for each in self.object.followup_set.all():
             try:
+                logger.debug("About to ask for the email to be sent")
                 each.request_feedback()
             except Exception, e:
                 logger.debug("Couldn't send feedback request because: %s" % e)
@@ -62,5 +63,5 @@ class FollowUpUpdate(OLContextMixin, UpdateView):
         return super(FollowUpUpdate, self).form_invalid(form)
 
     def form_valid(self, form):
-        logger.debug("logged as debug in invalid")
+        logger.debug("logged as debug in valid")
         return super(FollowUpUpdate, self).form_valid(form)

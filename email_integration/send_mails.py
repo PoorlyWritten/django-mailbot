@@ -28,8 +28,8 @@ def send_verification_email(to_email,anon_hash,template='user_emails/verificatio
     msg.send()
 
 def request_feedback_email(to_email, connector_name, link):
-    subject, from_email, to = 'How did the introduction help you?', '%s via introduction.es <my@introduction.es>' % connector_name, to_email
-    text_content = "%s want's to know how the introduction went.\n\nDid it lead to something already or is it still building?\n%s\n-%s" % (connector_name, link, connector_name)
+    subject, from_email, to = "I'd like to make better introductions for you", '%s via introduction.es <my@introduction.es>' % connector_name, to_email
+    text_content = "%s wants to know how the introduction went.\n\nDid it lead to something already or is it still building?\n%s\n-%s" % (connector_name, link, connector_name)
     html_content = "<p>%s want's to know how the introduction went.</p><p>Did it lead to something already or is it still building?</p><p><a href=\"%s\">%s</a></p><p>-%s" % (connector_name, link, link, connector_name)
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")

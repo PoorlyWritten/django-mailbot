@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'', include('email_integration.urls')),
     (r'^browserid/', include('django_browserid.urls')),
     (r'^$', OLTemplateView.as_view(template_name="home.html")),
+    (r'^pricing$', OLTemplateView.as_view(template_name="pricing.html")),
     (r'^logout$', logout_then_login),
 )
 

@@ -1,0 +1,45 @@
+
+      <div class="two columns mobile-one"><div class=row><img src="http://placehold.it/80x80&text=[img]" /></div><div class=row>{{ object.created }}</div></div>
+        <div class="eight columns">
+            <p><strong>You introduced {{ object.introducee1 }} to {{ object.introducee2 }}</strong><br /> </p>
+          <p><span class="round label">Work</span><span class="round label">Investment</span><span class="round label">Important</span></p>
+          <ul class="accordion">
+            <li>
+              <div class="title">
+                <h5>Message</h5>
+              </div>
+              <div class="content">
+                  {{ object.message|linebreaks }}
+              </div>
+            </li>
+          </ul>
+          <ul class="link-list">
+            <li><a href="">Comment</a></li>
+          </ul>
+          
+          <h6>What's happened because of this:</h6>
+          {% if object.followup_set.commented %}
+          {% for feedback in object.followup_set.commented %}
+          {% if feedback.comment %}
+          <div class="row">
+              <div class="two columns mobile-one"><img src="http://placehold.it/50x50&text=[img]" />{{ feedback.created }}</div>
+            <div class="ten columns">
+                <blockquote>
+                    <p>{{ feedback.comment }}<cite>{{feedback.email}}</cite></p>
+                </blockquote>
+              <ul class="link-list">
+                <li><a href="">Comment</a></li>
+                <li><a href="">Share</a></li>
+              </ul>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% else %}
+          <div class="row">
+            <div class="ten columns ">
+              <p>Nothing yet... <a href="/introductions/{{ object.pk }}/notify">Request Feedback</a></p>
+            </div>
+          </div>
+          {% endif %}
+    </div>

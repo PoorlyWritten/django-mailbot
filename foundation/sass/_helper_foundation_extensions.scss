@@ -1,0 +1,61 @@
+
+//More appropriate gutter sizes - TODO: Extend
+@media only screen and (min-width: $breakpoint_medium) {
+	.thinner-alleys {
+
+		> .columns:first-child {
+		padding-right:7.5px}
+
+		> .columns:last-child {
+		padding-left:7.5px}
+
+	}
+}
+
+
+.button {
+
+	//Buttons sized just like standard form elements
+	&.form-input-sized {
+	padding-top:8px !important;
+	padding-bottom:8px !important}
+
+	&.wide {
+	display:block;
+
+		&.slim-sides {
+		padding-left:0;
+		padding-right:0}
+	}
+
+	&.emphasise-text {
+	text-shadow: 0em 0.08em 0.2em rgba(0, 0, 0, 0.3)
+	}
+}
+	input[type=button].button.wide,
+	input[type=submit].button.wide {
+	width:100%}
+
+
+.panel {
+
+	&.grey-panel {
+	background:lighten($bodyColor3,10%);
+	margin: 15px -20px;
+	padding: 15px;
+	}
+
+	&.blue-panel {
+	background-color:$softBlue;
+
+		&.bordered{
+		border:1px solid $softBlueBorder;
+		}
+
+		input[type=text],
+		textarea {
+		border-color:darken($softBlueBorder,7.5%);
+		}
+	}
+
+}

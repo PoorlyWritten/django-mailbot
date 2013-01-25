@@ -1,0 +1,53 @@
+.how-it-works-process {
+
+
+	.section {
+	padding-left:18px
+	}
+
+
+	.section-heading {
+	font-size:2.3em;
+	}
+
+	p {
+	font-size:1.12em;
+	}
+
+	.nudge-top {
+	margin-top:-1em
+	}
+
+	.subtle {
+		color:$txtColor2;
+		font-size:1.3em;
+	}
+
+	.user-story {
+	margin-top:10px;
+	margin-left:150px;
+	padding:10px 10px 10px 176px;
+	background:url(//s3-eu-west-1.amazonaws.com/assets.oneleap.to/img/striped-bg2.png) repeat transparent;
+	//border:1px solid $txtColor;
+	border:1px dotted $bodyColor3;
+	position:relative;
+
+		.image {
+			width:140px;
+			position:absolute;
+			left:36px;
+			top:36px;
+			margin:0  10px 10px 0px;
+			height:100%;
+
+			 img {
+			 	display:block;
+			 	width:100%;
+			 }
+		}
+		// .name {
+		// 	margin-bottom: -.2em;
+		// }
+	}
+
+}

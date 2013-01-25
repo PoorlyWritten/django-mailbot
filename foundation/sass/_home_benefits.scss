@@ -1,0 +1,16 @@
+.benefits img {
+	margin-bottom:-8px;
+}
+
+.benefit-header,
+.process-header {
+font-size:1.3em;
+color:$txtColor3;
+text-align:center
+}
+
+.benefit-header + p,
+.process-header + p {
+color:$txtColor;
+text-align: center;
+}

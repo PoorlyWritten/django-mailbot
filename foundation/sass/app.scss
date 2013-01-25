@@ -1,50 +1,105 @@
-// Your custom settings file to override Foundation defaults
+// You custom settings file to override Foundation defaults
 @import "settings";
 
 // Comment out this import if you are customizing you imports below
-@import "foundation";
-@import "fonts";
+//@import "foundation";
+
 // ----------------------------------------
 // Import specific parts of Foundation by commenting the import "foundation"
 // and uncommenting what you want below. You must uncomment the following if customizing
 
-// @import "compass/css3";
-// @import "foundation/settings";
-// @import "foundation/functions/all";
+ @import "compass/css3";
+ @import "foundation/settings";
+ @import "foundation/functions/all";
 
 // Control which mixins you have access too
-
-// @import "foundation/mixins/clearfix";
-// @import "foundation/mixins/css-triangle";
-// @import "foundation/mixins/font-size";
+@import "foundation/mixins/clearfix";
+@import "foundation/mixins/css-triangle";
+@import "foundation/mixins/font-size";
 
 // Must include next two for semantic grid to work
+@import "foundation/mixins/respond-to";
+@import "foundation/mixins/semantic-grid";
 
-// @import "foundation/mixins/respond-to";
-// @import "foundation/mixins/semantic-grid";
-
-// @import "modular-scale";
-// @import "foundation/common/globals";
+@import "foundation/common/globals";
+@import "modular-scale";
 
 // Must include the grid for any responsiveness
-
-// @import "foundation/components/grid";
+@import "foundation/components/grid";
 
 // Control which common styles get compiled
-
-// @import "foundation/common/typography";
-// @import "foundation/common/forms";
+@import "foundation/common/typography";
+@import "foundation/common/forms";
 
 // Control which components you get if customizing
-
-// @import "foundation/components/modules/buttons";
+@import "foundation/components/modules/buttons";
 // @import "foundation/components/modules/tabs";
-// @import "foundation/components/modules/ui";
-// @import "foundation/components/modules/topbar";
-// @import "foundation/components/modules/navbar";
-// @import "foundation/components/modules/orbit";
-// @import "foundation/components/modules/reveal";
+@import "foundation/components/modules/ui";
+@import "foundation/components/modules/topbar";
+@import "foundation/components/modules/navbar";
+@import "foundation/components/modules/orbit";
+@import "foundation/components/modules/reveal";
 // @import "foundation/components/modules/offcanvas";
 
-// Media Queries Overrides
-// @import "foundation/components/modules/mqueries";
+//Mixins
+@import "mixins";
+
+//Helpers
+@import "helper_nonBreakingParent"; //@replete's extension to allow further grid versatility
+@import "helper_naughty"; //Naughty non-semantics
+@import "helper_IE"; //Some old IE 
+@import "helper_js"; //JS content
+@import "helper_foundation_extensions"; //Custom extensions to Zurb 
+
+//Icons
+@import "foundicons_general", "foundicons_social";
+
+//Global styles
+@import "global";
+
+//Global Components
+@import "actions"; //Links, CTA, custom buttons
+@import "lists";
+@import "text"; //Paragraphs, headings
+@import "forms";
+
+//Modules
+@import "modals";
+
+//Site structure
+@import "topbar";
+@import "sections";
+@import "footer";
+
+//Content 
+// @import "featuredIn";
+// @import "partners";
+// @import "spotlight";
+
+//Page: Home
+@import "introductions";
+// @import "home_benefits";
+// @import "home_connections";
+// @import "home_process";
+
+//Page: About
+// @import "about_bio";
+// @import "about_team";
+// @import "about_board";
+
+//Page: How it works
+// @import "howItWorks";
+// @import "howItWorks_spotlight";
+// @import "howItWorks_benefits";
+
+//Page: Application
+// @import "app_global";
+// @import "app_list";
+// @import "app_browseHeader";
+
+//Page: Signup & Apply
+// @import "signup_apply";
+
+//Functionality:
+// @import "jcrop";
+

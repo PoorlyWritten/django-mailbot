@@ -1,0 +1,55 @@
+﻿/*---------------------------------------
+   Replete Core
+   http://replete.nu
+-----------------------------------------
+   Dev CSS
+ˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍ
+˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭*/
+
+#dev-ref-visual {    
+position:absolute;
+left:0;
+top:0;
+height:5000px;
+width:100%;
+opacity:.3;
+z-index:1337 !important}
+
+#dev-alert {
+position:fixed;
+top:20px;
+left:60px;
+font-size:16px;
+font-weight:bold;
+color:red;
+z-index:4100}
+
+#dev-title {
+position:fixed;
+top:20px;
+left:20px;
+font-size:16px;
+font-weight:bold;
+color:red;
+z-index:4100;
+text-shadow:1px 1px 1px rgba(0,0,0,.5)}
+
+#dev-title .help {
+display:inline-block;
+background:rgba(0,0,0,.4);
+padding:2px 4px;
+border-radius:4px;
+color:#666;
+cursor:pointer !important;}
+
+#dev-title .help .toggle {
+color:#fff;
+width:1em}
+
+#dev-title .help .content {
+color:#fff;
+font-size:12px;
+font-weight:normal}
+
+#dev-title .help .content b{
+color:#666}

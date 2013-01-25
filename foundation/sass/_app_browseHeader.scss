@@ -1,0 +1,33 @@
+.browse-nav-bar {
+	//@include border-radius(5px 5px 0 0);
+
+	background:transparent;
+	font-size:20px;
+	margin-bottom:-20px !important;
+	
+	> li {
+		border:none;
+		background:#B7C2CD;
+
+		&:hover {
+		background:transparent;
+		color:$white;
+		background:$mainColor;
+		}
+
+		&.active {
+			background:$white;
+		}
+	}
+
+	> li > a:first-child {
+	color:$secondaryColor;	
+	font-size: 20px;
+	font-weight:bold;
+	margin-bottom:2px;
+
+		&:hover {
+
+		}
+	}
+}

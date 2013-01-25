@@ -1,0 +1,21 @@
+.how-it-works-spotlight {
+background: url(//s3-eu-west-1.amazonaws.com/assets.oneleap.to/img/hero-doug-subdued.png) center 10px no-repeat $bodyColor2;
+
+	.section-sub-heading {
+	position:relative;
+	font-size:5.72em;
+	padding-top:.2em;
+	margin-bottom:.32em;
+	}
+
+	.section-sub-heading::after {
+	content:"";
+	display:block;
+	width:1px;
+	border-left:1px dotted $bodyColor3;
+	height:2130px;
+	left:-24px;
+	top:10px;
+	position:absolute;
+	}
+}

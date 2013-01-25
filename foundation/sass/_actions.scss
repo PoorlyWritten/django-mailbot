@@ -1,0 +1,20 @@
+.button:hover {
+background-color:$mainColorAccent;	
+}
+
+.link-more {
+text-transform: uppercase;
+font-size:1.2em;
+}
+
+.link-more:after {
+	content:' »';
+}
+
+a > img {
+	border:0;
+}
+
+a.fake-link {
+	cursor:pointer
+}

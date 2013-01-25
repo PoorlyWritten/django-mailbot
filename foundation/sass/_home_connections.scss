@@ -1,0 +1,181 @@
+$connectorColor: #f9d04b;
+$connectorColor2: #7390bc;
+
+.connections {
+background: url(//s3-eu-west-1.amazonaws.com/assets.oneleap.to/img/striped-bg2.png) !important;
+}
+
+
+.connections {
+border-top:1px solid $bodyColor2;
+border-bottom:1px solid $bodyColor2;
+}
+
+.connections .five {
+z-index:2;
+}
+
+.connector {
+	background-color:$connectorColor;
+	color:$white;
+	padding:.4em;
+	font-size:1.7em;
+	font-weight:normal;
+	margin-bottom:0px;
+}
+
+.connector.alternate {
+	background-color:$connectorColor2;
+}
+
+.connection-type {
+	color:$connectorColor;
+	text-transform:uppercase;
+	font-weight: normal;
+
+}
+
+.connector-details {
+	position:relative;
+	z-index:1;
+}
+.connector-details:before {
+	content:'➞';
+	font-size:4em;
+	position:absolute;
+	top:.22em;
+	left:-.4em;
+	color:$connectorColor;
+	z-index:1;
+}
+.connector-details:after {
+	content:'➞';
+	font-size:4em;
+	position:absolute;
+	top:0.16em;
+	right:-.4em;
+	color:$connectorColor2;
+	z-index:1;
+	@include rotate(180deg);
+//	@include rotateIE(180);
+
+}
+
+.ie8 .connector-details:after {
+
+	top:0.565em;
+	content:'';
+background:url(ie8_leaderArrow.png) no-repeat;
+width:40px;
+height:21px;
+}
+
+.connector-details img {
+	display:block;
+	margin:0 auto -10px auto;
+}
+.connection-type-detail {
+	color:$txtColor;
+	text-transform:uppercase;
+	font-weight: normal;
+	font-size:1.2em;
+}
+
+.connector-details {
+	margin-top:60px;
+}
+
+.connector-name {
+text-transform: uppercase;
+}
+
+.connector-title {
+	text-transform: none;
+	color:$txtColor2;
+	font-style:italic;
+	float:right;
+}
+
+.connector-quote {
+margin-top:-10px;
+color:$txtColor;
+}
+
+.connector-image img {
+border-right:5px solid $connectorColor;
+}
+
+.connector.alternate + .connector-image img {
+border-left:5px solid $connectorColor2;
+border-right:0 !important
+}
+
+@media only screen and (max-width: $breakpoint_medium) {
+
+
+
+	.connector {
+		font-size:1.2em !important;
+	}
+
+	.connector-name {
+		margin-top:5px;
+	}
+
+	.connector-title {
+		display:block;
+		float:none !important
+	}
+
+	.connector-image {
+	padding:0 !important;
+	}
+
+	.connector-image img {
+		border:0 !important;
+		padding:0 0 0 0
+	
+	}
+	.connection-type-icon {
+		display:none !important
+
+	}
+	.connector-quote {
+		color:$txtColor3 !important
+	}
+
+	.connector-details {
+		margin-top:1px
+	}
+
+	.connection-type {
+		margin-bottom:20px
+	}
+
+	.connection-type-details {
+		margin-bottom:15px
+	}	
+
+	.connector-outer {
+		overflow:hidden;
+	}
+
+	.connector-details:after {
+		top:85%;
+		right:50%;
+		margin-right:-.5em;
+		@include rotate(270deg);
+	}
+
+	.connector-details:before {
+		top:0em;
+		left:-.65em;
+		color:$connectorColor;
+		z-index:1;
+	}	
+
+	.connection:nth-of-type(2n+1) {
+		background:$white;
+	}
+	
+}

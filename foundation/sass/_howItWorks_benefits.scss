@@ -1,0 +1,21 @@
+$largeBenefit_imgSize: 133px;
+
+.large-benefit {
+	min-height: $largeBenefit_imgSize;
+}
+
+.large-benefit img {
+	display:block;
+	max-height:$largeBenefit_imgSize;
+	max-width:$largeBenefit_imgSize;
+margin:-10px 30px 0 -15px
+}
+
+
+.large-benefit .benefit-header {
+	font-size:1.6em
+}
+.large-benefit .benefit-header, 
+.large-benefit .benefit-header + p{
+	margin-bottom:.5em
+}

@@ -1,0 +1,39 @@
+
+.signup-modal {
+
+
+	$profileImageSize: 60px;
+	.profile-image {
+	width:$profileImageSize;
+	height:$profileImageSize;
+	display:inline-block;
+	overflow:hidden;
+	margin:-5px 0 12px 0;
+	@include border-radius(100%);
+
+		img {
+		display:block;
+		width:$profileImageSize;
+		min-height:$profileImageSize;
+		@include border-radius(100%);
+		}
+	}
+
+	.profile-title {
+	font-size:32px; 
+	margin-top:8px;
+	margin-bottom:2px;
+	}
+
+	.profile-item {
+	margin-bottom:8px;
+	}
+
+	.profile-item-label {
+	display:inline-block;
+	width:88px;
+	text-align:right;
+	padding:4px;
+	}
+
+}

@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 from django.contrib import admin
-from models import RawEmail, EmailAddress
+from models import RawEmail, EmailAddress, EmailProfile
 from introductions.models import Introduction
 import datetime
 
@@ -26,3 +26,4 @@ class RawEmailAdmin(admin.ModelAdmin):
 
 admin.site.register(RawEmail, RawEmailAdmin)
 admin.site.register(EmailAddress)
+admin.site.register(EmailProfile)

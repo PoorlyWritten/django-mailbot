@@ -11,7 +11,7 @@ class IntroductionListView(OLContextMixin, ListView):
 
     def get_queryset(self):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
-        return Introduction.objects.filter(connector = self.request.user)
+        return Introduction.objects.filter(connector = self.request.user).order_by('-created')
 
 class IntroductionDetailView(OLContextMixin, DetailView):
     model = Introduction

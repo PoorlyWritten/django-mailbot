@@ -40,7 +40,7 @@ class FollowUpManager(models.Manager):
         return super(FollowUpManager, self).all().exclude(comment=None)
 
 class FollowUp(models.Model):
-    id = UUIDField(primary_key=True, version=4)
+    id = UUIDField(primary_key=True, auto=True, version=4)
     name = NullableCharField(max_length=128, null=True)
     email = models.EmailField(max_length=128, null=True)
     other_email = models.EmailField(max_length=128, null=True)
@@ -85,6 +85,7 @@ class IntroductionManager(models.Manager):
         if not connector:
             # This came from an unregistered user
             # TODO: Send welcome email and invite to join
+            print "Can't find a registered user to be the connector for this new message.  From was: %s" % from_email
             return None
         introducee1 = None
         introducee2 = None
@@ -114,7 +115,7 @@ class IntroductionManager(models.Manager):
 
 
 class Introduction(models.Model):
-    id = UUIDField(primary_key=True, version=4)
+    id = UUIDField(primary_key=True, auto=True, version=4)
     connector = models.ForeignKey(User)
     introducee1 = models.EmailField()
     introducee2 = models.EmailField()
@@ -155,7 +156,9 @@ class Introduction(models.Model):
 
 def parse_one_mail(raw_message_id):
     logger.debug("parse_one_mail was called...")
+    print "parse_one_mail was called..."
     raw_message=RawEmail.objects.get(pk=raw_message_id)
+    print "Raw Message = %s " % raw_message.pk
     try:
         intro = Introduction.objects.create_introduction(raw_email = raw_message)
         raw_message.date_parsed = datetime.datetime.utcnow()
@@ -182,16 +185,24 @@ def parse_mail(sender,**kwargs):
     instance = kwargs['instance']
     logger.debug("In parse_mail where instance.pk = %s" % instance.pk)
     if not instance.parsed:
-        parse_one_mail(instance.pk)
+        intro = parse_one_mail(instance.pk)
+        if intro:
+            intro.save()
 
 def assert_followup(sender, **kwargs):
     instance = kwargs['instance']
     instance.create_followups()
 
 def test_signal_handler(sender, **kwargs):
+    logger.debug('test_signal_handler - kwargs = %s' % kwargs)
+    print 'test_signal_handler - kwargs = %s' % kwargs
     logger.debug('test_signal_handler - sender = %s' % sender)
+    print 'test_signal_handler - sender = %s' % sender
     logger.debug('test_signal_handler - instance = %s' % kwargs['instance'])
+    print 'test_signal_handler - instance = %s' % kwargs['instance']
+    logger.debug('test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__)
+    print 'test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__
 
-#post_save.connect(test_signal_handler)
+post_save.connect(test_signal_handler)
 post_save.connect(parse_mail, sender=RawEmail)
 post_save.connect(assert_followup, sender=Introduction)

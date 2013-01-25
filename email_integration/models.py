@@ -62,7 +62,7 @@ def _extract_emails(msg, header_key):
 
 class EmailProfile(models.Model):
     """A class to manage the relationship between e-mail addresses and people"""
-    id = UUIDField(primary_key=True, version=4)
+    id = UUIDField(primary_key=True, auto=True, version=4)
     user = models.ForeignKey(User)
     date_added = models.DateTimeField(auto_now_add=True)
 
@@ -72,7 +72,7 @@ class EmailProfile(models.Model):
 
 class RawEmail(models.Model):
     """A class to hold raw email"""
-    id = UUIDField(primary_key=True, version=4)
+    id = UUIDField(primary_key=True, auto=True, version=4)
     content = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
     date_parsed = models.DateTimeField(null=True, blank=True)
@@ -175,7 +175,7 @@ class EmailAddressManager(models.Manager):
 
 
 class EmailAddress(models.Model):
-    id = UUIDField(primary_key=True, version=4)
+    id = UUIDField(primary_key=True, auto=True, version=4)
     user_profile = models.ForeignKey(EmailProfile, null=True, blank=True)
     email_address = models.EmailField(unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -195,4 +195,10 @@ def create_emails(sender, **kwargs):
     instance = kwargs['instance']
     instance.create_emails()
 
+def create_emailprofile(sender, **kwargs):
+    user = kwargs['instance']
+    user_profile, created = EmailProfile.objects.get_or_create(user=user)
+
+
 post_save.connect(create_emails, sender=RawEmail)
+post_save.connect(create_emailprofile, sender=User)

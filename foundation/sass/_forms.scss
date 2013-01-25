@@ -1,0 +1,136 @@
+.ui-state-error {
+//background: lighten($error, 48%) !important;	
+border-color:$error !important;
+
+	@include input-placeholder(lighten($error,30%));
+
+	&.inlined {
+	background-color:lighten($error,30%);
+	}
+}
+
+// .ui-state-valid {
+// //background: lighten($success, 70%) !important;	
+// background:#F2FDF2;
+// border-color:#07AC00 !important
+// }
+
+.validation-error-message {
+display:none;
+color: $error;
+margin-top:-9px;
+padding:4px;
+text-align:right;
+}
+
+.inlined-wrap {
+background:$white;
+border:1px solid #e6e6e6;
+display:inline-block;
+padding:4px;
+position:relative;
+padding-right:30px;
+
+	&.wide {
+	width:100%;
+
+		.inlined {
+		width:100%;	
+		}
+	}
+
+	&.slim-top {
+	padding-top:0
+	}
+
+	&.slimtopbottom {
+	padding-top:0;
+	padding-bottom:0;
+	}
+
+	.inlined {
+	border-color:transparent !important;
+	background:$white;
+	margin:0 !important;
+	color:$black;
+	}
+
+	[contenteditable] {
+	line-height:1em;
+	color:$black;
+	outline:none;
+	}
+
+	.foundicon-edit {
+	color:lighten($txtColor, 20%);
+	position:absolute;
+	top:7px;
+	right:5px;
+	vertical-align:middle;
+	line-height:1em;
+	}
+
+	.inlined-label {
+	display: inline-block;
+	vertical-align: top;
+	line-height: 1.24em;
+	}
+
+}
+
+input,
+textarea,
+[contenteditable] {
+	
+	&.text-emphasis {
+	font-weight:bold;
+	}
+
+	&.inlined {
+	display:inline;
+	width:auto;
+	padding:0;
+	height: 1.8em;
+	//text-indent: 3px;
+	border:1px solid #e6e6e6;
+	background:transparent;
+	//margin-left:2px;
+	@include box-shadow(none !important);
+
+		// &::after {
+		// content:"\f01a";
+		// font-family:GeneralFoundicons;
+		// font-size:1em;
+		// display:block;
+		// background:red;
+		// color:black;
+		// width:20px;
+		// height:20px;
+		// }
+
+		&:focus,
+		&:active {
+		border-color:#ddd;
+		background:$white;
+		}
+
+		&:hover {
+		background:$white;
+		}
+	}
+}
+
+
+.note-banner {
+background: $warningLight;
+border-bottom:1px solid darken($warningLight, 15%);
+
+	&.slim {
+	margin: -15px -15px 20px -15px !important;
+	padding: 5px 15px;
+	}
+
+	.profile-item {
+		margin-bottom:0 !important;
+	}
+}

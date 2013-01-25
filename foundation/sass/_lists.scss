@@ -1,0 +1,28 @@
+
+.list-number {
+background:$secondaryColor;
+color:$white;
+width:1.2em;
+height:1.2em;
+display: inline-block;
+text-align: center;
+padding: .25em;
+line-height: .735em;
+@include border-radius(1em);
+}
+
+.list-highlighted {
+list-style:none;
+}
+
+.list-highlighted li {
+	background:$white;
+	font-size:2em;
+	font-weight:100;
+	color:$secondaryColor;
+	border-left:.4em solid $mainColor;
+	line-height: 1.2em;
+	padding:.6em 2em .6em .6em;
+	margin-bottom: .5em
+}
+

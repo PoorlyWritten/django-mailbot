@@ -1,0 +1,70 @@
+/* Naughty 'non-semantic' classes */
+
+.fr {
+  float: right !important;
+}
+.fl {
+  float: left !important;
+}
+.fc {
+  clear: both !important;
+}
+.fn {
+	float:none !important
+}
+.tl {
+  text-align: left !important;
+}
+.tr {
+  text-align: right !important;
+}
+.tc {
+  text-align: center !important;
+}
+.uc {
+  text-transform: uppercase !important;
+}
+.lc {
+  text-transform: lowercase !important;
+}
+.cc {
+  text-transform: capitalize !important;
+}
+
+@media only screen and (max-width: $breakpoint_medium) {
+
+	.mobile-fr {
+	  float: right !important;
+	}
+	.mobile-fl {
+	  float: left !important;
+	}
+	.mobile-fn {
+		float:none !important
+	}
+	.mobile-fc {
+	  clear: both !important;
+	}
+	.mobile-tl {
+	  text-align: left !important;
+	}
+	.mobile-tr {
+	  text-align: right !important;
+	}
+	.mobile-tc {
+	  text-align: center !important;
+	}
+	.mobile-uc {
+	  text-transform: uppercase !important;
+	}
+	.mobile-lc {
+	  text-transform: lowercase !important;
+	}
+	.mobile-cc {
+	  text-transform: capitalize !important;
+	}
+
+	.mobile-hide {
+	display:none
+	}
+}

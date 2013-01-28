@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     (r'^browserid/', include('django_browserid.urls')),
     (r'^$', OLTemplateView.as_view(template_name="home.html")),
     (r'^pricing$', OLTemplateView.as_view(template_name="pricing.html")),
+    (r'^dev/introductions$', OLTemplateView.as_view(template_name="introduction.html")),
+    (r'^dev/main$', OLTemplateView.as_view(template_name="main.html")),
     (r'^logout$', logout_then_login),
 )
 

@@ -1,33 +1,68 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
+{% block header %}
+<div class="heading-section">
+  
+  <div class="row">
+    <div class="twelve columns">
+      <h1 class="primary-heading offset-top">
+        <span class="large">Leave private feedback</span>
+      </h1>
+    </div>
+  </div>
+</div>
+{% endblock %}
 {% block content %}
-     <div class="row">
- 
-    <!-- Contact Details -->
+<article class="introduction alternative">
+  <div class="row">
     <div class="nine columns">
- 
-      <h3>How did it go?</h3>
-      <p>{{ object.introduction.connector }} thought enough of you to recommend a connection for you to {{ object.other_email }}</p>
-      <p>You got introduced to someone.  I'll bet it was better than a seaside holiday, right?  Let me know how it went so that I can do a better job in the future.</p>
+      <div class="row person-container">
+        <div class="five columns">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.email }}</h1>
+          </div>
+        </div>
+        <div class="one columns person-seperator"> </div>
+        <div class="five columns end">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.other_email }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="section new-section diagonal-dash introductions">  
+  <div class="row">
+    <div class="twelve columns">
+    <div class="row introduction-date">
+      <div class="twelve columns">
+        <h3 class="large date">{{ object.introduction.created|timesince }} ago</h3>
+      </div>
+    </div>
+    <article class="introduction">
 
-          <ul class="accordion">
-            <li>
-              <div class="title">
-                <h5>Original Message from {{ object.introduction.connector }}</h5>
+          <div class="row">
+            <div class="nine columns">
+              <div class="row">
+                <div class="twelve columns">
+                  <div class="message">
+                        <span class="profile-image"><img src="http://s3.amazonaws.com/ol_assets/shaker_images/philricketts.jpg" alt=""></span>
+                        <h2 class="subject">{{ object.introduction.subject }}</h2>
+                        <div class="date">{{ object.introduction.created }}</div>
+                        <div class="message-content">
+                          {{ object.introduction.message|linebreaks }}
+                        </div>
+                  </div>
+                </div>
               </div>
-              <div class="content">
-                  {{ object.introduction.message }}
-              </div>
-            </li>
-          </ul>
- 
-      <dl class="contained tabs">
-        <dd class="active"><a href="#contactForm">Feedback</a></dd>
-      </dl>
- 
-      <ul class="tabs-content contained">
-        <li id="contactFormTab" class="active">
+            </div>
+  <div class="row">
+      <div class="twelve columns">
+        <div class="outcomes">
+            <h4 class="title">What's happened because of this?</h4>
           <form  method="post">
               {% csrf_token %}
                 <div class="row collapse">
@@ -53,8 +88,8 @@
                 {% endfor %}
             <button type="submit" class="radius button">Submit</button>
             </form>
-        </li>
-      </ul>
- 
-    </div>
+        </div>
+      </div>
+  </div>
+</article>
     {% endblock %}

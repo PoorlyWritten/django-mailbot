@@ -1,45 +1,108 @@
-
-      <div class="two columns mobile-one"><div class=row><img src="http://placehold.it/80x80&text=[img]" /></div><div class=row>{{ object.created }}</div></div>
-        <div class="eight columns">
-            <p><strong>You introduced {{ object.introducee1 }} to {{ object.introducee2 }}</strong><br /> </p>
-          <p><span class="round label">Work</span><span class="round label">Investment</span><span class="round label">Important</span></p>
-          <ul class="accordion">
-            <li>
-              <div class="title">
-                <h5>Message</h5>
-              </div>
-              <div class="content">
-                  {{ object.message|linebreaks }}
-              </div>
-            </li>
-          </ul>
-          <ul class="link-list">
-            <li><a href="">Comment</a></li>
-          </ul>
-          
-          <h6>What's happened because of this:</h6>
-          {% if object.followup_set.commented %}
-          {% for feedback in object.followup_set.commented %}
-          {% if feedback.comment %}
-          <div class="row">
-              <div class="two columns mobile-one"><img src="http://placehold.it/50x50&text=[img]" />{{ feedback.created }}</div>
-            <div class="ten columns">
-                <blockquote>
-                    <p>{{ feedback.comment }}<cite>{{feedback.email}}</cite></p>
-                </blockquote>
-              <ul class="link-list">
-                <li><a href="">Comment</a></li>
-                <li><a href="">Share</a></li>
-              </ul>
-            </div>
+<article class="introduction alternative">
+  <div class="row">
+    <div class="nine columns">
+      <div class="row person-container">
+        <div class="five columns">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.introducee1 }}</h1>
           </div>
-          {% endif %}
-          {% endfor %}
-          {% else %}
-          <div class="row">
-            <div class="ten columns ">
-              <p>Nothing yet... <a href="/introductions/{{ object.pk }}/notify">Request Feedback</a></p>
-            </div>
+        </div>
+        <div class="one columns person-seperator"> </div>
+        <div class="five columns end">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.introducee2 }}</h1>
           </div>
-          {% endif %}
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="row">
+      <div class="twelve columns">
+        <div class="outcomes">
+
+            <h4 class="title">What's happened because of this?</h4>
+            <p>Let the people who you've introduced help you make better introductions.  Ask them how it went.</p>
+            <a class="medium button radius" href="#">Request Feedback</a>
+        </div>
+      </div>
+  </div>
+</article>
+<div class="section new-section diagonal-dash introductions">  
+  <div class="row">
+    <div class="twelve columns">
+    <div class="row introduction-date">
+      <div class="twelve columns">
+        <h3 class="large date">{{ object.created|timesince }} ago</h3>
+      </div>
+    </div>
+    <article class="introduction">
+
+          <div class="top">
+            <span class="info">Introduction created</span>
+          </div>
+          <div class="row">
+            <div class="nine columns">
+              <div class="row">
+                <div class="twelve columns">
+                  <div class="message">
+                        <span class="profile-image"><img src="http://s3.amazonaws.com/ol_assets/shaker_images/philricketts.jpg" alt=""></span>
+                        <h2 class="subject">{{ object.subject }}</h2>
+                        <div class="date">{{ object.created }}</div>
+                        <div class="message-content">
+                          {{ object.message|linebreaks }}
+                        </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% comment %}
+            <div class="three columns">
+              <div class="aside">
+                  <h4 class="title">My Notes</h4>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                  tempor incididunt.</p>
+              </div>
+            </div>
+            {% endcomment %}
+          </div>
+
+    </article>
+
+{% for feedback in object.followup_set.commented %}
+<div class="row introduction-date">
+  <div class="twelve columns">
+    <h3 class="large date">{{ feedback.added|timesince }} ago</h3>
+  </div>
+</div>
+<article class="introduction">
+
+      <div class="top">
+        <span class="info">Feedback received from {{ feedback.email }}</span>
+      </div>
+
+      <div class="row">
+        <div class="nine columns">
+          
+
+          <div class="row">
+            <div class="twelve columns">
+              
+              <div class="message">
+ 
+                    <span class="profile-image"><img src="http://s3.amazonaws.com/ol_assets/shaker_images/philricketts.jpg" alt=""></span>
+
+                    <div class="date">{{ feedback.added }}</div>
+                    <div class="message-content">
+                    {{ feedback.comment|linebreaks }}
+                    </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</article>
+{% endfor %}

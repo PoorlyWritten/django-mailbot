@@ -5,7 +5,6 @@ from models import RawEmail
 from django.conf import settings
 from celery.task.schedules import crontab
 from celery.task import periodic_task
-from celery import task
 from django.db import transaction
 
 try:
@@ -38,7 +37,6 @@ def _tx_create_raw_message(content):
     raw_mail = RawEmail(content=content)
     try:
         raw_mail.save(force_insert=True)
-        logger.debug("inside _tx_create_raw_message")
         transaction.commit()
     except:
         transaction.rollback()

@@ -11,6 +11,21 @@ import hashlib
 import re
 import os
 
+class TemplatedEmailMessage(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    description = models.CharField(max_length=512)
+    subject = models.CharField(max_length=512)
+    text_content = models.TextField()
+    html_content = models.TextField(null=True, blank=True)
+
+def extract_plain_text_body(msg):
+    body = None
+    for subpart in email.iterators.typed_subpart_iterator(msg, "text", "plain"):
+        if body:
+            body = "%s\n%s" % (body, subpart._payload)
+        else:
+            body = subpart._payload
+    return body
 
 def isolate_email(address):
     """Apply several regular expressions to detect
@@ -113,14 +128,7 @@ class RawEmail(models.Model):
     def payload(self):
         if not self.msg:
             self.msg = email.message_from_string(self.content)
-        if self.msg.is_multipart():
-            content = u''
-            for part in self.msg.walk():
-                if part.get_content_type() == 'text/plain':
-                    content = u'%s\n%s' % (content, unicode(part))
-        else:
-            content = self.msg.get_payload()
-        return content
+        return extract_plain_text_body(self.msg)
     @property
     def isolated_from_addr(self):
         return isolate_email(self.from_addr)
@@ -152,26 +160,34 @@ class RawEmail(models.Model):
             _tx_create_email_address(each)
         _tx_create_email_address(self.isolated_from_addr)
 
+
 class EmailAddressManager(models.Manager):
-    def get_or_create_email(self, email_address):
+    def get_or_create_email(self, email_address, **kwargs):
         normalized_email = isolate_email(email_address)
         validate_email(normalized_email) #will throw exception on error
         try:
             addr = self.get(email_address=normalized_email)
-            print addr.pk
-            created = False
+            logger.debug("Existing email address found for %s" % email_address)
+            for key,value in kwargs.iteritems():
+                setattr(addr,key, value)
+            created = None
         except EmailAddress.DoesNotExist:
-            addr = self.create_email(normalized_email)
+            logger.debug("Creating new email address for %s" % email_address)
+            addr = self.create_email(normalized_email, **kwargs)
             created = True
         return addr, created
 
-    def create_email(self, email_address):
+    def create_email(self, email_address, **kwargs):
         normalized_email = isolate_email(email_address)
         validate_email(normalized_email) #will throw exception on error
-        return EmailAddress(
+        attrs = dict(
             email_address=normalized_email,
             address_hash=hashlib.sha1(normalized_email).hexdigest(),
-            verification_hash=os.urandom(32).encode('hex'))
+            verification_hash=os.urandom(32).encode('hex'),
+            **kwargs
+        )
+        logger.debug("Creating email with attrs: %s" % attrs)
+        return EmailAddress(**attrs)
 
 
 class EmailAddress(models.Model):
@@ -198,6 +214,15 @@ def create_emails(sender, **kwargs):
 def create_emailprofile(sender, **kwargs):
     user = kwargs['instance']
     user_profile, created = EmailProfile.objects.get_or_create(user=user)
+    if created:
+        logger.debug("Created profile for %s" % user_profile.user.email)
+    email_addr, crated = EmailAddress.objects.get_or_create_email(user.email,
+                                                          verification_complete=True,
+                                                          user_profile = user_profile)
+    if created:
+        logger.debug("Created email_address for %s" % user.email)
+    logger.debug("user for %s is %s" % (user.email, email_addr.user_profile.user))
+    email_addr.save()
 
 
 post_save.connect(create_emails, sender=RawEmail)

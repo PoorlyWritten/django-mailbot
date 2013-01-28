@@ -1,22 +1,41 @@
 {% extends 'base.html' %}
 
+{% block header %}
+<div class="heading-section">
+  
+  <div class="row">
+    <div class="three columns">
+      <img src="http://s3.amazonaws.com/ol_assets/shaker_images/robynscott1_2_1.jpg" alt=""/>
+    </div>
+    <div class="nine columns">
+      <h1 class="primary-heading offset-top">
+        Your Powerful
+        <span class="large">Introductions</span>
+      </h1>
+      <h2 class="sub-heading has-icon intros">
+          {{ object_list|length }} Intros
+      </h2>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
 {% block content %}
 
-<div class="row">    
-    
-    <!-- Main Feed -->
-    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
-    <div class="nine columns centered">
-      
+<div class="section new-section diagonal-dash introductions">  
+  <div class="row">
+    <div class="twelve columns">
         {% for object in object_list %}
       <!-- Feed Entry -->
-      <div class="row">
-          {% include 'introductions/_introduction_item.html' %}
-      </div>
+          {% include 'introductions/_introduction_list_item.html' %}
+          <hr />
       <!-- End Feed Entry -->
-      <hr />
       {% endfor %}
     </div>
   </div>
+</div>
     
   {% endblock %}

@@ -9,7 +9,6 @@ from djangoratings.fields import AnonymousRatingField
 import datetime
 import os
 
-
 class NullableCharField(models.CharField):
     description = "CharField that obeys null=True"
 
@@ -187,11 +186,8 @@ def parse_mail(sender,**kwargs):
     if not instance.parsed:
         intro = parse_one_mail(instance.pk)
         if intro:
+            intro.create_followups()
             intro.save()
-
-def assert_followup(sender, **kwargs):
-    instance = kwargs['instance']
-    instance.create_followups()
 
 def test_signal_handler(sender, **kwargs):
     logger.debug('test_signal_handler - kwargs = %s' % kwargs)
@@ -203,6 +199,5 @@ def test_signal_handler(sender, **kwargs):
     logger.debug('test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__)
     print 'test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__
 
-post_save.connect(test_signal_handler)
+#post_save.connect(test_signal_handler)
 post_save.connect(parse_mail, sender=RawEmail)
-post_save.connect(assert_followup, sender=Introduction)

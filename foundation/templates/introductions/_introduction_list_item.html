@@ -1,0 +1,87 @@
+<article class="introduction">
+
+      <div class="top">
+          <span class="info">You introduced {{ object.introducee1 }} to {{ object.introducee2 }} - {{ object.created|timesince }}</span>
+        <a href="/introductions/{{ object.pk }}" class="details">View Details »</a>
+      </div>
+
+      <div class="row">
+        <div class="nine columns">
+          
+          <div class="row person-container">
+            <div class="five columns">
+              
+              <div class="person">
+                <span class="image"><img src="/images/icon_person.png" alt=""></span>
+                <h1 class="name">{{ object.introducee1 }}</h1>
+              </div>
+
+            </div>
+            <div class="one columns person-seperator">
+          
+            </div>
+            <div class="five columns end">
+              
+              <div class="person">
+                <span class="image"><img src="/images/icon_person.png" alt=""></span>
+                <h1 class="name">{{ object.introducee2 }}</h1>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="twelve columns">
+              
+              <div class="message">
+ 
+
+                  <h2 class="subject">{{ object.subject }}</h2>
+                  <div class="date">{{ object.created }}</div>
+                    <div class="message-content">
+                        {{ object.message|linebreaks }}
+                    </div>
+
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="three columns">
+          
+          <div class="aside">
+
+              <h4 class="title">What's happened because of this?</h4>
+          {% if object.followup_set.commented %}
+          {% for feedback in object.followup_set.commented %}
+          {% if feedback.comment %}
+          <div class="row">
+            <div class="twelve columns">
+                <p>{{ feedback.comment }}</p><p>{{feedback.email}}</cite></p>
+              <ul class="link-list">
+                <li><a href="">Comment</a></li>
+                <li><a href="">Share</a></li>
+              </ul>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% else %}
+          <div class="row">
+            <div class="twelve columns ">
+                <p>Nothing yet...</p>
+              <a class="medium button radius" href="/introductions/{{ object.pk }}/notify">Request Feedback</a>
+            </div>
+          </div>
+          {% endif %}
+            
+
+          </div>
+
+        </div>
+
+      </div>
+
+</article>

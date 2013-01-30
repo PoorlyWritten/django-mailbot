@@ -1,15 +1,17 @@
 import logging
 logger = logging.getLogger(__name__)
-from django.db import models
-from django_extensions.db.fields import UUIDField
-from django.db import transaction
 from django.contrib.auth.models import User
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMultiAlternatives
+from django.core.validators import validate_email
+from django.db import models
+from django.db import transaction
+from django.template import Template
+from django_extensions.db.fields import UUIDField
 import email
 import hashlib
-import re
 import os
+import re
 
 class TemplatedEmailMessage(models.Model):
     name = models.CharField(max_length=64, unique=True)
@@ -20,6 +22,21 @@ class TemplatedEmailMessage(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def send(self, from_email, to_email, context_dict):
+        msg = EmailMultiAlternatives(
+            self.subject,
+            Template(self.text_content).render(context_dict),
+            from_email,
+            [to_email]
+        )
+        if self.html_content != "":
+            msg.attach_alternative(
+                Template(self.html_content).render(context_dict),
+                "text/html"
+            )
+        msg.send()
+
 
 def extract_plain_text_body(msg):
     body = None

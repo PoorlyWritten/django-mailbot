@@ -1,7 +1,12 @@
+{% load avatar_tags %}
           <li class="has-dropdown emphasis alternate-style">
               <a href="#" class="current-user">
-                <img src="http://s3.amazonaws.com/ol_assets/shaker_images/robynscott1_2_1.jpg" class="avatar"/>
-                Hi Robyn!
+                  <img src="{% avatar_url user %}" class="avatar"/>
+                {% if user.first_name %}
+                Hi {{ user.first_name }}!
+                {% else %}
+                Hi!
+                {% endif %}
               </a>
             <ul class="dropdown">
               <li><label>Email Addresses</label></li>
@@ -14,6 +19,11 @@
               <li class="divider"></li>
               <li><label>Introductions</label></li>
               <li><a href="/introductions">My Introductions</a></li>
+              <li class="divider"></li>
+              <li><label>Settings</label></li>
+              <li><a href="/my/profile">My Profile</a></li>
+              <li><a href="/my/settings">Email Settings</a></li>
+              <li><a href="{% url avatar_change %}">Change your avatar</a></li>
               <li class="divider"></li>
               <li><a href="/logout">Log out</a></li>
             </ul>

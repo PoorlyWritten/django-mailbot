@@ -19,6 +19,7 @@
     </div>
   </div>
   <div class="row">
+      {% if object.followup_set.commented|length == 0 %}
       <div class="twelve columns">
         <div class="outcomes">
 
@@ -27,6 +28,7 @@
             <a class="medium button radius" href="#">Request Feedback</a>
         </div>
       </div>
+      {% endif %}
   </div>
 </article>
 <div class="section new-section diagonal-dash introductions">  

@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'avatar',
     'email_integration',
     'oneleap_mailer',
     'introductions',

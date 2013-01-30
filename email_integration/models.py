@@ -1,5 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
@@ -23,7 +24,7 @@ class TemplatedEmailMessage(models.Model):
     def __unicode__(self):
         return self.name
 
-    def send(self, from_email, to_email, context_dict):
+    def send(self, from_email=settings.DEFAULT_FROM_ADDRESS, to_email=None, context_dict=None):
         msg = EmailMultiAlternatives(
             self.subject,
             Template(self.text_content).render(context_dict),
@@ -244,6 +245,18 @@ def create_emailprofile(sender, **kwargs):
     logger.debug("user for %s is %s" % (user.email, email_addr.user_profile.user))
     email_addr.save()
 
+def send_welcome_email(sender, **kwargs):
+    user = kwargs['instance']
+    template = TemplatedEmailMessage.object.get(name="ConnectorWelcome")
+    context_dict = dict(
+                        connector = user.get_full_name()
+                    )
+    template.send(
+        from_email = "Robyn Scott <welcome@intros.to>",
+        to_email = user.email,
+        context_dict = context_dict
+    )
 
 post_save.connect(create_emails, sender=RawEmail)
 post_save.connect(create_emailprofile, sender=User)
+post_save.connect(send_welcome_email, sender=User)

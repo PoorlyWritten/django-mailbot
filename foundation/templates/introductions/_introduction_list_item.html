@@ -1,7 +1,7 @@
 <article class="introduction">
 
       <div class="top">
-          <span class="info">You introduced {{ object.introducee1 }} to {{ object.introducee2 }} - {{ object.created|timesince }}</span>
+          <span class="info">{{ object.introducee1 }} to {{ object.introducee2 }} - {{ object.created|timesince }}</span>
       </div>
 
       <div class="row">
@@ -35,7 +35,7 @@
               <div class="message">
  
 
-                  <h2 class="subject">{{ object.subject }}</h2>
+                  <h2 class="subject">{{ object.subject|truncatewords:5 }}</h2>
                   <div class="date">{{ object.created }}</div>
                     <div class="message-content">
                         {{ object.message|truncatewords:10 }}

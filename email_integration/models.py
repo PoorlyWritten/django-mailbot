@@ -18,6 +18,9 @@ class TemplatedEmailMessage(models.Model):
     text_content = models.TextField()
     html_content = models.TextField(null=True, blank=True)
 
+    def __unicode__(self):
+        return self.name
+
 def extract_plain_text_body(msg):
     body = None
     for subpart in email.iterators.typed_subpart_iterator(msg, "text", "plain"):

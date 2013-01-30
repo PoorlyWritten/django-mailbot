@@ -19,13 +19,13 @@
     </div>
   </div>
   <div class="row">
-      {% if object.followup_set.commented|length == 0 %}
+      {% if object.followup_set.requested|length == 0 %}
       <div class="twelve columns">
         <div class="outcomes">
 
-            <h4 class="title">What's happened because of this?</h4>
-            <p>Let the people who you've introduced help you make better introductions.  Ask them how it went.</p>
-            <a class="medium button radius" href="#">Request Feedback</a>
+            <h4 class="title">What's happened because of your introduction?</h4>
+            <p>The people you’ve introduced can help you make better introductions. Ask them how it went.</p>
+            <a class="medium button radius" href="/introductions/{{ object.pk }}/notify">Request Feedback</a>
         </div>
       </div>
       {% endif %}
@@ -71,6 +71,19 @@
           </div>
 
     </article>
+
+{% for feedback in object.followup_set.requested %}
+<div class="row introduction-date">
+  <div class="twelve columns">
+    <h3 class="large date">{{ feedback.requested|timesince }} ago</h3>
+  </div>
+</div>
+<article class="introduction">
+      <div class="top">
+        <span class="info">Feedback requested from {{ feedback.email }}</span>
+      </div>
+</article>
+{% endfor %}
 
 {% for feedback in object.followup_set.commented %}
 <div class="row introduction-date">

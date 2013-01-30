@@ -3,11 +3,10 @@
 
 {% block header %}
 <div class="heading-section">
-  
   <div class="row">
     <div class="twelve columns">
-      <h1 class="primary-heading offset-top">
-        <span class="large">Leave private feedback</span>
+      <h1 class="primary-heading offset-top">Help {{object.introduction.connector}} make better intros
+          <span class="large">Give Feedback </span>
       </h1>
     </div>
   </div>
@@ -81,7 +80,7 @@
                     {% endfor %}
                     </div>
                 </div>
-                <label>How did it go?</label>
+                <label>Was it appropriate? Interesting? Has something cool come of it?</label>
                 {{ form.comment|attr:"rows:4"|add_error_class:"error" }}
                 {% for error in form.comment.errors %}
                     <small class=error>{{ error }}</small>

@@ -36,7 +36,12 @@ class NullableCharField(models.CharField):
 
 class FollowUpManager(models.Manager):
     def commented(self):
-        return super(FollowUpManager, self).all().exclude(comment=None)
+        return super(FollowUpManager, self).all().exclude(comment=None).order_by("-requested")
+
+    def requested(self):
+        return super(FollowUpManager, self).all().exclude(requested=None).order_by("-requested")
+
+
 
 class FollowUp(models.Model):
     id = UUIDField(primary_key=True, auto=True, version=4)

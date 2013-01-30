@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block header %}
@@ -7,7 +6,7 @@
   <div class="row">
     <div class="twelve columns">
       <h1 class="primary-heading offset-top">
-          {{ object.subject }}
+          {{ object.subject|truncatewords:5 }}
         <span class="large">Introduction</span>
       </h1>
     </div>

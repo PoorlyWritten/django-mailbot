@@ -1,1 +1,56 @@
 {% extends 'base.html' %}
+{% block header %}
+<div class="heading-section">
+  <div class="row">
+    <div class="twelve columns">
+      <h1 class="primary-heading offset-top">
+          {{ object.subject|truncatewords:5 }}
+        <span class="large">Request Feedback</span>
+      </h1>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">    
+    <div class="twelve columns">
+<article class="introduction alternative">
+  <div class="row">
+    <div class="nine columns">
+      <div class="row person-container">
+        <div class="five columns">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.introducee1 }}</h1>
+          </div>
+        </div>
+        <div class="one columns person-seperator"> </div>
+        <div class="five columns end">
+          <div class="person">
+            <span class="image"><img src="/images/icon_person.png" alt=""></span>
+            <h1 class="name">{{ object.introducee2 }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+      <div class="twelve columns">
+        <div class="outcomes">
+
+            <h4 class="title">What's happened because of your introduction?</h4>
+            <p>The people you’ve introduced can help you make better introductions. Ask them how it went.</p>
+            <form method=POST>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="SUBMIT" value="Request Feedback" class="medium button radius" />
+            </form>
+        </div>
+      </div>
+  </div>
+</article>
+    </div>
+</div>
+  {% endblock %}

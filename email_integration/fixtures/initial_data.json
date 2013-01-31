@@ -1,0 +1,35 @@
+[
+  {
+    "pk": 1,
+    "model": "email_integration.templatedemailmessage",
+    "fields": {
+      "text_content": "Hi {{ connector }},\r\n\r\nWelcome to intros.to,  a new service for powerful \u2018superconnectors\u2019 , where you can discover what happens thanks to your intros, and strengthen your network and reputation. \r\n\r\nTo start learning about your intros, simply bcc my@intros.to next time you make an introduction.\r\n\r\nWe\u2019ll record your introduction and you can login at anytime to view recent intros, and request feedback from the people you\u2019ve connected.\r\n\r\nAny questions, please drop us a line at connectors@intros.to\r\n\r\nThank you!\r\n\r\nRobyn and the OneLeap team",
+      "html_content": "<p>Hi {{ connector }},</p>\r\n<br />\r\n<p>Welcome to intros.to,  a new service for powerful \u2018superconnectors\u2019 , where you can discover what happens thanks to your intros, and strengthen your network and reputation. \r\n<br />\r\n<p>To start learning about your intros, simply bcc <a href=\"mailto:my@intros.to\">my@intros.to</a> next time you make an introduction.</p>\r\n<br />\r\n<p>We\u2019ll record your introduction and you can login at anytime to view recent intros, and request feedback from the people you\u2019ve connected.</p>\r\n<br />\r\n<p>Any questions, please drop us a line at <a href=\"mailto:connectors@intros.to\">connectors@intros.to</a></p>\r\n<br />\r\n<p>Thank you!</p>\r\n<br />\r\n<p>Robyn and the OneLeap team</p>\r\n<p><a href=\"http://intros.to\">Intos.to</a>",
+      "subject": "Welcome to intros.to",
+      "name": "ConnectorWelcome",
+      "description": "Sent to Welcome new Connectors to the system"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "email_integration.templatedemailmessage",
+    "fields": {
+      "text_content": "Hi {{ connector_name }}\r\n\r\nJust to let you know we\u2019ve captured you\u2019re intro - {{ introduction.subject }}. \r\n\r\nYou can request feedback from the people you\u2019ve introduced anytime at http://intros.to/introductions.\r\n\r\nThanks,\r\n\r\nThe intros.to Team",
+      "html_content": "<p>Hi {{ connector_name }}\r\n<br />\r\n<p>Just to let you know we\u2019ve captured you\u2019re intro - {{ introduction.subject }}. </p>\r\n<br />\r\n<p>You can request feedback from the people you\u2019ve introduced anytime<a href=\"http://intros.to/introductions/{{ introduction.pk }}\">here</a>.</p>\r\n<br />\r\n<p>Thanks,</p>\r\n<br />\r\n<p>The intros.to Team</p>\r\n<p><a href=\"http://intros.to\">intros.to</a></p>",
+      "subject": "Got it!",
+      "name": "IntroductionRegistered",
+      "description": "Sent to notify user of new introduction registered"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "email_integration.templatedemailmessage",
+    "fields": {
+      "text_content": "I recently made an introduction for you to {{ other_email }}.\r\n\r\nTo help me make better intros for you, please let me know if this was a good one.\r\n\r\nFollow this link and say what you thought.  Takes a minute max.\r\n\r\n{{ link }}\r\n\r\nThanks,\r\n\r\n{{ connector_name }}\r\n\r\nAre you a connector? Follow your introductions by activating your account at http://intros.to.",
+      "html_content": "<br />\r\n<p>I recently made an introduction for you to {{ other_email }}.</p>\r\n<br />\r\n<p>To help me make better intros for you, please let me know if this was a good one.</p>\r\n<br />\r\n<p>Follow this link and say what you thought.  Takes a minute max.</p>\r\n<br />\r\n<p><a href=\"{{ link }}\">Click Here</a></p>\r\n<br />\r\n<p>Thanks,</p>\r\n<br />\r\n<p>{{ connector_name }}</p>\r\n<br />\r\n<p>Are you a connector? Follow your introductions by activating your account at <a href=\"http://intros.to\">intros.to</a>.</p>",
+      "subject": "Was my introduction helpful?",
+      "name": "RequestFeedback",
+      "description": "Sent to request feedback from introducee"
+    }
+  }
+]

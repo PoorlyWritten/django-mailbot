@@ -1,11 +1,12 @@
 import logging
 logger = logging.getLogger(__name__)
-from django.db import models, IntegrityError
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import models, IntegrityError
 from django_extensions.db.fields import UUIDField
-from email_integration.send_mails import request_feedback_email
-from email_integration.models import RawEmail, EmailAddress
 from djangoratings.fields import AnonymousRatingField
+from email_integration.models import RawEmail, EmailAddress
+from email_integration.send_mails import request_feedback_email
 import datetime
 import os
 
@@ -67,9 +68,10 @@ class FollowUp(models.Model):
     def request_feedback(self):
         to_email = self.email
         connector_name = self.introduction.connector.get_full_name() or self.introduction.from_name
+        from_email = "%s via intros.to <%s>" % (connector_name, settings.DEFAULT_FROM_EMAIL)
         other_email = self.other_email
         link = "http://introduction.es/introductions/feedback/%s" % self.custom_url
-        request_feedback_email(to_email, connector_name, other_email, link)
+        request_feedback_email(to_email, from_email, connector_name, other_email, link)
         self.requested = datetime.datetime.utcnow()
         self.save()
 

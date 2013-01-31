@@ -98,7 +98,6 @@ class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
         return super(RequestFeedbackFormView, self).form_valid(form)
 
 
-
 class FollowUpUpdate(OLContextMixin, UpdateView):
     model = FollowUp
     form_class = FollowUpForm
@@ -117,4 +116,5 @@ class FollowUpUpdate(OLContextMixin, UpdateView):
 
     def form_valid(self, form):
         logger.debug("logged as debug in valid")
+        #TODO: Add a notification e-mail
         return super(FollowUpUpdate, self).form_valid(form)

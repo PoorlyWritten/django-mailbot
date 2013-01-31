@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'djangoratings',
+    'storages',
     # South must be last
     'south'
 )
@@ -154,7 +155,8 @@ AUTHENTICATION_BACKENDS = (
     # ...
 )
 
-
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_S3_SECURE_URLS = False
 BROWSERID_CREATE_USER = True
 
 from logging.handlers import SysLogHandler

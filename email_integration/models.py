@@ -7,7 +7,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.core.validators import validate_email
 from django.db import models
 from django.db import transaction
-from django.template import Template
+from django.template import Template, Context
 from django_extensions.db.fields import UUIDField
 import email
 import hashlib
@@ -24,18 +24,20 @@ class TemplatedEmailMessage(models.Model):
     def __unicode__(self):
         return self.name
 
-    def send(self, from_email=settings.DEFAULT_FROM_ADDRESS, to_email=None, context_dict=None):
+    def send(self, from_email=settings.DEFAULT_FROM_EMAIL, to_email=None, context_dict=None):
         msg = EmailMultiAlternatives(
             self.subject,
-            Template(self.text_content).render(context_dict),
+            Template(self.text_content).render(Context(context_dict)),
             from_email,
             [to_email]
         )
         if self.html_content != "":
+            tmpl = Template(self.html_content)
             msg.attach_alternative(
-                Template(self.html_content).render(context_dict),
+                tmpl.render(Context(context_dict)),
                 "text/html"
             )
+        logger.debug("Sending to %s from %s" %( to_email, from_email))
         msg.send()
 
 
@@ -68,7 +70,7 @@ def isolate_email(address):
 def isolate_name(address):
     m = re.match("(?P<name>[^<].*)<(?P<email>.*)>", address)
     if m:
-        return m.group('name').lstrip().rstrip()
+        return m.group('name').lstrip().rstrip().lstrip('"').rstrip('"')
     return None
 
 
@@ -83,17 +85,6 @@ def _tx_create_email_address(addr):
         transaction.rollback()
         address = None
     return address
-
-
-def _extract_emails(msg, header_key):
-    addresses = []
-    for each in msg.get(header_key,'').replace('\n', '').replace('\t', '').split(','):
-        if each:
-            print "Working with address: %s " % each
-            addr = _tx_create_email_address(each)
-            if addr:
-                addresses.append(addr)
-        return addresses
 
 
 class EmailProfile(models.Model):
@@ -122,7 +113,7 @@ class RawEmail(models.Model):
     def _get_header(self, header_name):
         if not self.msg:
             self.msg = email.message_from_string(self.content)
-        return self.msg.get(header_name, '').replace('\n','').lstrip().rstrip()
+        return self.msg.get(header_name, '').replace('\n','').replace('\t','').lstrip().rstrip()
 
     @property
     def to(self):
@@ -170,22 +161,27 @@ class RawEmail(models.Model):
         return isolate_name(self.from_addr)
 
     def create_emails(self):
-        for each in self.isolated_to:
-            logger.debug("working with recipient: '%s'" % each)
-            _tx_create_email_address(each)
-        for each in self.isolated_bcc:
-            logger.debug("working with recipient: '%s'" % each)
-            _tx_create_email_address(each)
-        for each in self.isolated_cc:
-            logger.debug("working with recipient: '%s'" % each)
-            _tx_create_email_address(each)
+        for each in self._get_header("To").split(','):
+            if each != '':
+                logger.debug("working with recipient: '%s'" % each)
+                _tx_create_email_address(each)
+        for each in self._get_header("Bcc").split(','):
+            if each != '':
+                logger.debug("working with recipient: '%s'" % each)
+                _tx_create_email_address(each)
+        for each in self._get_header("Cc").split(','):
+            if each != '':
+                logger.debug("working with recipient: '%s'" % each)
+                _tx_create_email_address(each)
         _tx_create_email_address(self.isolated_from_addr)
-
 
 class EmailAddressManager(models.Manager):
     def get_or_create_email(self, email_address, **kwargs):
         normalized_email = isolate_email(email_address)
         validate_email(normalized_email) #will throw exception on error
+        full_name = isolate_name(email_address)
+        if full_name:
+            kwargs['full_name'] = full_name
         try:
             addr = self.get(email_address=normalized_email)
             logger.debug("Existing email address found for %s" % email_address)
@@ -215,6 +211,7 @@ class EmailAddress(models.Model):
     id = UUIDField(primary_key=True, auto=True, version=4)
     user_profile = models.ForeignKey(EmailProfile, null=True, blank=True)
     email_address = models.EmailField(unique=True)
+    full_name = models.CharField(max_length=128, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     address_hash = models.CharField(max_length=128, null=True, blank=True, unique=True)
     verification_hash = models.CharField(max_length=128, null=True, blank=True)
@@ -231,6 +228,23 @@ from django.db.models.signals import post_save
 def create_emails(sender, **kwargs):
     instance = kwargs['instance']
     instance.create_emails()
+
+def reconcile_names(sender, **kwargs):
+    instance = kwargs['instance']
+    try:
+        first_name, last_name = instance.full_name.split(" ")
+        try:
+            user = User.objects.get(email=instance.email_address)
+            if user.first_name == "" and user.last_name == "":
+                user.first_name = first_name
+                user.last_name = last_name
+                user.save()
+        except User.DoesNotExist:
+            pass
+
+    except:
+        pass
+
 
 def create_emailprofile(sender, **kwargs):
     user = kwargs['instance']
@@ -258,5 +272,6 @@ def send_welcome_email(sender, **kwargs):
     )
 
 post_save.connect(create_emails, sender=RawEmail)
+post_save.connect(reconcile_names, sender=EmailAddress)
 post_save.connect(create_emailprofile, sender=User)
 post_save.connect(send_welcome_email, sender=User)

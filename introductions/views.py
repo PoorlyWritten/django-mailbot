@@ -73,7 +73,11 @@ class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
         )
 
     def get_success_url(self):
-        return "/notification_complete"
+        try:
+            assert self.object
+        except AttributeError:
+            self.object = self.get_object()
+        return "/introductions/%s" % self.object.pk
 
     def get_context_data(self, **kwargs):
         return super(RequestFeedbackFormView, self).get_context_data(object=self.object, **kwargs)

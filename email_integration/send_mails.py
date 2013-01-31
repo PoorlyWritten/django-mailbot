@@ -45,14 +45,13 @@ def send_verification_email(to_email,anon_hash,template='user_emails/verificatio
 #        logger.debug(msg.message())
 
 def request_feedback_email(to_email, connector_name, other_email, link):
-    template = TemplatedEmailMessage.object.get(name="RequestFeedback")
+    template = TemplatedEmailMessage.objects.get(name="RequestFeedback")
     context_dict = dict(
                     connector_name = connector_name,
                     other_email = other_email,
                     link = link,
                     )
     template.send(
-        from_email = "My Intros <my@intros.to>",
         to_email = to_email,
         context_dict = context_dict
     )

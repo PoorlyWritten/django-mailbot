@@ -65,13 +65,13 @@ class FollowUp(models.Model):
     def __unicode__(self):
         return "Feedback from %s for %s" % (self.email, self.introduction)
 
-    def request_feedback(self):
+    def request_feedback(self, msg=None):
         to_email = self.email
         connector_name = self.introduction.connector.get_full_name() or self.introduction.from_name
         from_email = "%s via intros.to <%s>" % (connector_name, settings.DEFAULT_FROM_EMAIL)
         other_email = self.other_email
         link = "http://introduction.es/introductions/feedback/%s" % self.custom_url
-        request_feedback_email(to_email, from_email, connector_name, other_email, link)
+        request_feedback_email(to_email, from_email, connector_name, other_email, msg, link)
         self.requested = datetime.datetime.utcnow()
         self.save()
 

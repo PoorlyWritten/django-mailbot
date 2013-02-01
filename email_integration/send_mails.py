@@ -28,8 +28,11 @@ def send_verification_email(to_email,anon_hash,template='user_emails/verificatio
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-def request_feedback_email(to_email, from_email, connector_name, other_email, link):
+def request_feedback_email(to_email, from_email, connector_name, other_email, msg, link):
     template = TemplatedEmailMessage.objects.get(name="RequestFeedback")
+    if msg:
+        template.text_content = "%s\n{{ link }}\n\nAre you a connector? Follow your introductions by activating your account at http://intros.to." % msg
+        template.html_content = None
     context_dict = dict(
                     connector_name = connector_name,
                     other_email = other_email,

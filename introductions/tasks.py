@@ -21,7 +21,7 @@ def assert_followups():
         if len(each.followup_set.all()) < 2:
             each.create_followups()
 
-@periodic_task(run_every=crontab(minute="*/5"))
+@periodic_task(run_every=crontab(minute="*"))
 def parse_all_mail():
     unparsed_mail = RawEmail.objects.filter(parsed=False)
     logger.debug("Processing %d unparsed raw emails" % len(unparsed_mail))

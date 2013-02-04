@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models, IntegrityError
 from django_extensions.db.fields import UUIDField
 from djangoratings.fields import AnonymousRatingField
-from email_integration.models import RawEmail, EmailAddress
+from email_integration.models import RawEmail, EmailAddress, TemplatedEmailMessage
 from email_integration.send_mails import request_feedback_email
 import datetime
 import os
@@ -117,6 +117,12 @@ class IntroductionManager(models.Manager):
         )
         intro.save()
         logger.debug("Just created an introduction.  It's pk is : %s" % intro.pk)
+        try:
+            email = TemplatedEmailMessage.objects.get(name="IntroductionRegistered")
+            email.send(to_email=connector.email, context_dict={'connector_name': connector.get_full_name(), 'introduction':intro })
+        except Exception, error:
+            pass
+            logger.debug("Couldn't send mail announcing an intro made by %s because: %s" % ( connector, error))
         return intro
 
 

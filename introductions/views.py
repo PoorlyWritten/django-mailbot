@@ -131,5 +131,15 @@ class FollowUpUpdate(OLContextMixin, UpdateView):
 
     def form_valid(self, form):
         logger.debug("logged as debug in valid")
-        #TODO: Add a notification e-mail
+        try:
+            assert self.object
+        except AttributeError:
+            self.object = self.get_object()
+        email = TemplatedEmailMessage.objects.get(name='NewFeedback')
+        email.send(to_email=self.object.introduction.connector.email, context_dict={
+            'connector_name': self.object.introduction.connector.get_full_name(),
+            'email': self.object.email,
+            'other_email': self.object.other_email,
+            'introduction': self.object.introduction,
+        })
         return super(FollowUpUpdate, self).form_valid(form)

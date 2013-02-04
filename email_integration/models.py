@@ -26,10 +26,14 @@ class TemplatedEmailMessage(models.Model):
         return self.name
 
     def send(self, from_email=settings.DEFAULT_FROM_EMAIL, to_email=None, context_dict=None):
+        if from_email == settings.DEFAULT_FROM_EMAIL:
+            real_from = "My Introductions <%s>" % from_email
+        else:
+            real_from = from_email
         msg = EmailMultiAlternatives(
             self.subject,
             Template(self.text_content).render(Context(context_dict)),
-            from_email,
+            real_from,
             [to_email]
         )
         if self.html_content != "":
@@ -123,7 +127,7 @@ class RawEmail(models.Model):
             else:
                 content = str.encode('utf-8')
             return_content = u'%s%s' % (return_content, content)
-        return return_content.lstrip().rstrip()
+        return return_content.lstrip().rstrip().replace('\n','')
 
     @property
     def to(self):

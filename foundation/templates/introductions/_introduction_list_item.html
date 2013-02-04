@@ -64,10 +64,12 @@
           <div class="row">
             <div class="twelve columns">
                 <p>{{ feedback.comment }}</p><p>{{feedback.email}}</cite></p>
+            {% comment %}
               <ul class="link-list">
                 <li><a href="">Comment</a></li>
                 <li><a href="">Share</a></li>
               </ul>
+              {% endcomment %}
             </div>
           </div>
           {% endif %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load avatar_tags %}
+
+{% block content %}
+<div class="row">    
+    <div class="twelve columns">
+    <p>Your current picture: </p>
+    {% avatar user %}
+    {% if not avatars %}
+        <p>You do not yet have an avatar.  Please upload one now.</p>
+    {% else %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <ul class="inline-list">
+                {{ primary_avatar_form.as_ul }}
+            </ul>
+            <input class="medium button radius" type="submit" value="Choose new Default" />
+        </form>
+    {% endif %}
+    <form enctype="multipart/form-data" method="POST" action="">
+            {% csrf_token %}
+        <input type="file" name="avatar" value="Avatar Image" />
+        <input type="submit" class="medium button radius" value="Upload New Image" />
+    </form>
+    </div>
+</div>
+{% endblock %}

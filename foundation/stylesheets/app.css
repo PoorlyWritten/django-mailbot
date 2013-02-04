@@ -5285,8 +5285,5 @@ textarea.inlined:hover,
 
 /* line 6, ../sass/_comming_soon.scss */
 .home-teaser {
-  height: 600px;
-  background-image: url(/images/blue%20oneleap%20logo.png);
-  background-repeat: no-repeat;
-  background-position: center bottom;
+  height: 400px;
 }

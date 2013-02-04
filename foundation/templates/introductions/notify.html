@@ -55,18 +55,18 @@
 <form method=POST>
 {% csrf_token %}
 <div id="introduceeForm1" class="reveal-modal large">
-    <h3>The following message will be sent to <i>{{ object.introducee1 }}</i></h3>
+    <h3>Your request for feedback to <i>{{ object.introducee1 }}</i></h3>
     {{ form.introducee1_message }}
-    <p>We'll include the link to our site in the bottom so you don't have to.</p>
-    {{ form.include_introducee1 }} Uncheck this box if you'd rather not send e-mail to {{ object.introducee1 }}
+    <p>We'll include the feedback link at the bottom of the message.</p>
+    {{ form.include_introducee1 }} Uncheck this box if you'd rather not request feedback from {{ object.introducee1 }}
     <p><a href="#" class="button medium radius" data-reveal-id="introduceeForm2">Next</a></p>
     <a class="close-reveal-modal">&#215;</a>
 </div>
 <div id="introduceeForm2" class="reveal-modal large">
-    <h3>The following message will be sent to <i>{{ object.introducee2 }}</i></h3>
+    <h3>Your request for feedback to <i>{{ object.introducee2 }}</i></h3>
     {{ form.introducee2_message }}
-    <p>We'll include the link to our site in the bottom so you don't have to.</p>
-    {{ form.include_introducee2 }} Uncheck this box if you'd rather not send e-mail to {{ object.introducee1 }}
+    <p>We'll include the feedback link at the bottom of the message.</p>
+    {{ form.include_introducee2 }} Uncheck this box if you'd rather not request feedback from {{ object.introducee1 }}
     <p><input class="button medium radius" value="Request Feedback" type="submit"/></p>
     <a class="close-reveal-modal">&#215;</a>
 </div>

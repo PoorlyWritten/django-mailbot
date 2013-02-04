@@ -10,6 +10,7 @@ from django.db import transaction
 from django.template import Template, Context
 from django_extensions.db.fields import UUIDField
 import email
+from email.Header import decode_header
 import hashlib
 import os
 import re
@@ -113,7 +114,16 @@ class RawEmail(models.Model):
     def _get_header(self, header_name):
         if not self.msg:
             self.msg = email.message_from_string(self.content)
-        return self.msg.get(header_name, '').replace('\n','').replace('\t','').lstrip().rstrip()
+        header_content = decode_header(self.msg.get(header_name, ''))
+        return_content = u''
+        for line in header_content:
+            str, enc = line
+            if enc:
+                content = str.decode(enc)
+            else:
+                content = str.encode('utf-8')
+            return_content = u'%s%s' % (return_content, content)
+        return return_content.lstrip().rstrip()
 
     @property
     def to(self):
@@ -261,7 +271,7 @@ def create_emailprofile(sender, **kwargs):
 
 def send_welcome_email(sender, **kwargs):
     user = kwargs['instance']
-    template = TemplatedEmailMessage.object.get(name="ConnectorWelcome")
+    template = TemplatedEmailMessage.objects.get(name="ConnectorWelcome")
     context_dict = dict(
                         connector = user.get_full_name()
                     )

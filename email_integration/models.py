@@ -233,7 +233,7 @@ class EmailAddress(models.Model):
         return self.email_address
 
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 
 def create_emails(sender, **kwargs):
     instance = kwargs['instance']
@@ -261,27 +261,33 @@ def create_emailprofile(sender, **kwargs):
     user_profile, created = EmailProfile.objects.get_or_create(user=user)
     if created:
         logger.debug("Created profile for %s" % user_profile.user.email)
-    email_addr, crated = EmailAddress.objects.get_or_create_email(user.email,
+    email_addr, created = EmailAddress.objects.get_or_create_email(user.email,
                                                           verification_complete=True,
                                                           user_profile = user_profile)
     if created:
         logger.debug("Created email_address for %s" % user.email)
     logger.debug("user for %s is %s" % (user.email, email_addr.user_profile.user))
-    email_addr.save()
+    try:
+        email_addr.save()
+    except:
+        pass
 
-def send_welcome_email(sender, **kwargs):
+def send_welcome_email(sender, *args, **kwargs):
     user = kwargs['instance']
-    template = TemplatedEmailMessage.objects.get(name="ConnectorWelcome")
-    context_dict = dict(
-                        connector = user.get_full_name()
-                    )
-    template.send(
-        from_email = "Robyn Scott <welcome@intros.to>",
+    if user.pk == None:
+        template = TemplatedEmailMessage.objects.get(name="ConnectorWelcome")
+        context_dict = dict(
+                connector = user.get_full_name()
+                )
+        template.send(
+        from_email = "Robyn Scott <members@intros.to>",
         to_email = user.email,
         context_dict = context_dict
-    )
+        )
+    else:
+        logger.debug("PK for existing user is = %s" %  user.pk)
 
 post_save.connect(create_emails, sender=RawEmail)
 post_save.connect(reconcile_names, sender=EmailAddress)
 post_save.connect(create_emailprofile, sender=User)
-post_save.connect(send_welcome_email, sender=User)
+pre_save.connect(send_welcome_email, sender=User)

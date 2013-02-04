@@ -53,15 +53,6 @@ class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
     form_class = RequestFollowUpForm
     slug_field='id'
 
-    initial_message = """I recently made an introduction for you to %s
-
-To help me make better intros for you, please let me know if this was a good one.
-
-Just click this link and say what you thought. Takes a minute max.
-
-Thanks,
-"""
-
     def get_initial(self):
         try:
             assert self.object
@@ -88,7 +79,7 @@ Thanks,
             assert self.object
         except AttributeError:
             self.object = self.get_object()
-        return "/introductions/%s" % self.object.pk
+        return "/introductions/%s#FeedbackRequested" % self.object.pk
 
     def get_context_data(self, **kwargs):
         return super(RequestFeedbackFormView, self).get_context_data(object=self.object, **kwargs)

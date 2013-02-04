@@ -72,6 +72,9 @@
 
     </article>
 
+{% if object.followup_set.requested %}
+<div class="row"><div class="six columns centered"><h2 id="FeedbackRequested">Feedback Requested</h2></div></div>
+{% endif %}
 {% for feedback in object.followup_set.requested %}
 <div class="row introduction-date">
   <div class="twelve columns">

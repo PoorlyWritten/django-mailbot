@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.views import logout_then_login
-from email_bot.views import OLTemplateView
+from email_bot.views import OLTemplateView, OLHomeView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'', include('email_integration.urls')),
     (r'^browserid/', include('django_browserid.urls')),
     (r'^avatar/', include('avatar.urls')),
-    (r'^$', OLTemplateView.as_view(template_name="home.html")),
+    (r'^$', OLHomeView.as_view(template_name="home.html")),
     (r'^pricing$', OLTemplateView.as_view(template_name="pricing.html")),
     (r'^dev/introductions$', OLTemplateView.as_view(template_name="introduction.html")),
     (r'^dev/main$', OLTemplateView.as_view(template_name="main.html")),

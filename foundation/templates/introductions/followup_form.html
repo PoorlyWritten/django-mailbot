@@ -6,7 +6,7 @@
   <div class="row">
     <div class="twelve columns">
       <h1 class="primary-heading offset-top">Help {{ object.introduction.connector.get_full_name }} make better intros
-          <span class="large">Give Feedback </span>
+          <span class="large">Give Feedback </span><a href="#Feedback">
       </h1>
     </div>
   </div>
@@ -14,6 +14,13 @@
 {% endblock %}
 {% block content %}
 <article class="introduction alternative">
+<div class="section new-section diagonal-dash introductions">  
+  <div class="row">
+    <div class="twelve columns">
+    <div class="row introduction-date">
+      <div class="twelve columns">
+          <h3 class="large date">{{ object.introduction.connector.get_full_name }} introduced you {{ object.introduction.created|timesince }} ago</h3>
+      </div>
   <div class="row">
     <div class="nine columns">
       <div class="row person-container">
@@ -33,13 +40,6 @@
       </div>
     </div>
   </div>
-<div class="section new-section diagonal-dash introductions">  
-  <div class="row">
-    <div class="twelve columns">
-    <div class="row introduction-date">
-      <div class="twelve columns">
-        <h3 class="large date">{{ object.introduction.created|timesince }} ago</h3>
-      </div>
     </div>
     <article class="introduction">
 
@@ -48,7 +48,7 @@
               <div class="row">
                 <div class="twelve columns">
                   <div class="message">
-                        <span class="profile-image"><img src="http://s3.amazonaws.com/ol_assets/shaker_images/philricketts.jpg" alt=""></span>
+                        <span class="profile-image"><img src="/images/icon_person.png" alt=""></span>
                         <h2 class="subject">{{ object.introduction.subject }}</h2>
                         <div class="date">{{ object.introduction.created }}</div>
                         <div class="message-content">
@@ -62,7 +62,7 @@
       <div class="twelve columns">
         <div class="outcomes">
             <h4 class="title">What's happened because of this?</h4>
-          <form  method="post">
+          <form  method="post" id="Feedback">
               {% csrf_token %}
                 <div class="row collapse">
                     <div class="two columns"> {{ form.name.label_tag }}</div>

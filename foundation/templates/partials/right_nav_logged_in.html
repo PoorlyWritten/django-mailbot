@@ -15,16 +15,16 @@
               <li><a href=#>{{ addr.email_address }}</a></li>
               {% endfor %}
               {% endif %}
-              <li><a href="/verify">Verify Another Email</a></li>
+              <li><a href="/verify">Add another email address</a></li>
               <li class="divider"></li>
               <li><label>Introductions</label></li>
-              <li><a href="/introductions">My Introductions</a></li>
+              <li><a href="/introductions">My introductions</a></li>
               <li class="divider"></li>
               <li><label>Settings</label></li>
               {% comment %}<li><a href="/my/profile">My Profile</a></li>{% endcomment %}
               {% comment %}<li><a href="/my/settings">Email Settings</a></li>{% endcomment %}
               <li><a href="{% url avatar_change %}">Change your picture</a></li>
               <li class="divider"></li>
-              <li><a href="/logout">Log out</a></li>
+              <li><a href="/logout" class="browserid-logout">Log out</a></li>
             </ul>
             </li>

@@ -29,12 +29,22 @@
 <div class="section new-section diagonal-dash introductions">  
   <div class="row">
     <div class="twelve columns">
+        {% if object_list %}
         {% for object in object_list %}
       <!-- Feed Entry -->
           {% include 'introductions/_introduction_list_item.html' %}
           <hr />
       <!-- End Feed Entry -->
       {% endfor %}
+      {% else %}
+      <div class="row">
+          <div class="nine columns centered">
+              <h3>Start following the impact of your introductions now.</h4>
+              <h3 class="subheader">Add <strong>my@intros.to</strong> to the <strong>CC:</strong> or <strong>BCC:</strong> line of your next introduction.</h4>
+              <h3 class="subheader">Your introduction will appear here, and you can request feedback from the people you’ve connected.</h4>
+          </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

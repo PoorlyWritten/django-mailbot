@@ -70,7 +70,7 @@ class FollowUp(models.Model):
         connector_name = self.introduction.connector.get_full_name() or self.introduction.from_name
         from_email = "%s via intros.to <%s>" % (connector_name, settings.DEFAULT_FROM_EMAIL)
         other_email = self.other_email
-        link = "http://introduction.es/introductions/feedback/%s" % self.custom_url
+        link = "http://intros.to/introductions/feedback/%s" % self.custom_url
         request_feedback_email(to_email, from_email, connector_name, other_email, msg, link)
         self.requested = datetime.datetime.utcnow()
         self.save()

@@ -21,9 +21,9 @@ def send_html_mail(template_name, subject=None, from_email=None, to=None, cc=Non
     msg.send()
 
 def send_verification_email(to_email,anon_hash,template='user_emails/verification'):
-    subject, from_email, to = 'Please confirm your email address', 'my@introduction.es', to_email
-    text_content = 'Please go to http://introduction.es/verify/%s to confirm this email address.\n-alex' % anon_hash
-    html_content = 'Please go to <a href="http://introduction.es/verify/%s">introduction.es/verify</a> to confirm this email address.\n-alex' % anon_hash
+    subject, from_email, to = 'Please confirm your email address', 'my@intros.to', to_email
+    text_content = 'Please go to http://intros.to/verify/%s to confirm this email address.\n-alex' % anon_hash
+    html_content = 'Please go to <a href="http://intros.to/verify/%s">intros.to/verify</a> to confirm this email address.\n-alex' % anon_hash
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()

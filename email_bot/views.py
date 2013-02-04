@@ -1,6 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
 
 class OLContextMixin(object):
     """
@@ -25,3 +26,16 @@ class OLContextMixin(object):
 
 class OLTemplateView(OLContextMixin, TemplateView):
     pass
+
+class OLHomeView(OLTemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        logger.debug("In home dispatch where %s.anon = %s and %s.auth = %s" % (
+            request.user,
+            request.user.is_anonymous(),
+            request.user,
+            request.user.is_authenticated()))
+        if request.user.is_authenticated():
+            return HttpResponseRedirect('/introductions')
+        else:
+            return super(OLHomeView, self).dispatch(request, *args, **kwargs)
+

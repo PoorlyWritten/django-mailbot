@@ -1,7 +1,7 @@
 <article class="introduction">
 
       <div class="top">
-          <span class="info">{{ object.introducee1 }} to {{ object.introducee2 }} - {{ object.created|timesince }}</span>
+          <span class="info">{{ object.created|timesince }} ago</span>
       </div>
 
       <div class="row">
@@ -57,13 +57,13 @@
           
           <div class="aside">
 
-              <h4 class="title">What's happened because of this?</h4>
+              <h4 class="title">What they've said</h4>
           {% if object.followup_set.commented %}
           {% for feedback in object.followup_set.commented %}
           {% if feedback.comment %}
           <div class="row">
             <div class="twelve columns">
-                <p>{{ feedback.comment }}</p><p>{{feedback.email}}</cite></p>
+                <p>"{{ feedback.comment }}"</p><p>{{feedback.email}}</cite></p>
             {% comment %}
               <ul class="link-list">
                 <li><a href="">Comment</a></li>

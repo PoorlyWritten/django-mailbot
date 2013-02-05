@@ -1,7 +1,7 @@
 {% load avatar_tags %}
           <li class="has-dropdown emphasis alternate-style">
               <a href="#" class="current-user">
-                  <img src="{% avatar_url user %}" class="avatar"/>
+                  <img src="/images/profile-placeholder.png" class="avatar">
                 {% if user.first_name %}
                 Hi {{ user.first_name }}!
                 {% else %}
@@ -23,7 +23,7 @@
               <li><label>Settings</label></li>
               {% comment %}<li><a href="/my/profile">My Profile</a></li>{% endcomment %}
               {% comment %}<li><a href="/my/settings">Email Settings</a></li>{% endcomment %}
-              <li><a href="{% url avatar_change %}">Change your picture</a></li>
+              {% comment %}<li><a href="{% url avatar_change %}">Change your picture</a></li>{% endcomment %}
               <li class="divider"></li>
               <li><a href="/logout" class="browserid-logout">Log out</a></li>
             </ul>

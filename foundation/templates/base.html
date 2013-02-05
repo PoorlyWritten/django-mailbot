@@ -16,6 +16,24 @@
 	<link rel="stylesheet" href="/stylesheets/app.css">
 
 	<script src="/javascripts/foundation/modernizr.foundation.js"></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-10415910-4']);
+  _gaq.push(['_setDomainName', 'intros.to']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+{% if user.is_staff %}
+  _gaq.push(['_setVar','exclude_me']);
+{% endif %}
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
 
 </head>
 <body>
@@ -38,7 +56,9 @@
           {% if user.is_authenticated %}
           <li><a href="/introductions">My Introductions</a></li>
           {% endif %}
-
+          {% if user.is_staff %}
+          <li><a href="/admin/">Admin</a></li>
+          {% endif %}
               {% comment %}
             <li class="has-dropdown">
               <a href="#" class="activity">

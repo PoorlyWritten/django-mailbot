@@ -13,6 +13,8 @@ create_followups.short_description = "Force the creation of the followups"
 
 class IntroductionAdmin(admin.ModelAdmin):
     actions = [create_followups]
+    list_display = ('subject','connector','introducee1','introducee2','created')
+    ordering = ('-created',)
 
 
 admin.site.register(Introduction, IntroductionAdmin)

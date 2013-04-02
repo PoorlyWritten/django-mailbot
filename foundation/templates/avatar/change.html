@@ -4,16 +4,19 @@
 {% block content %}
 <div class="row">    
     <div class="twelve columns">
-    <p>Your current picture: </p>
-    {% avatar user %}
+        <h1>What do you look like?</h1>
+        <div class="row">
+            <div class="tc five columns centered">
+                {% avatar user 200 %}
+            </div>
+        </div>
+
     {% if not avatars %}
         <p>You do not yet have an avatar.  Please upload one now.</p>
     {% else %}
         <form method="POST" action="">
             {% csrf_token %}
-            <ul class="inline-list">
-                {{ primary_avatar_form.as_ul }}
-            </ul>
+            {{ primary_avatar_form }}
             <input class="medium button radius" type="submit" value="Choose new Default" />
         </form>
     {% endif %}

@@ -75,6 +75,12 @@ class FollowUp(models.Model):
         self.requested = datetime.datetime.utcnow()
         self.save()
 
+    def comment_length(self):
+        try:
+            return len(self.comment)
+        except TypeError:
+            return 0
+
 
 class IntroductionManager(models.Manager):
     def create_introduction(self, raw_email):

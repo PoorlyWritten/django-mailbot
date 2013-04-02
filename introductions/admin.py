@@ -16,6 +16,10 @@ class IntroductionAdmin(admin.ModelAdmin):
     list_display = ('subject','connector','introducee1','introducee2','created')
     ordering = ('-created',)
 
+class FollowUpAdmin(admin.ModelAdmin):
+    list_display = ('email', 'introduction', 'comment_length', 'created')
+    ordering = ('-created',)
+
 
 admin.site.register(Introduction, IntroductionAdmin)
-admin.site.register(FollowUp)
+admin.site.register(FollowUp, FollowUpAdmin)

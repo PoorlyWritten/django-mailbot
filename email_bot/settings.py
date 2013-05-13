@@ -62,7 +62,7 @@ STATIC_ROOT = 'https://s3.amazonaws.com/assets.intros.to/'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 #STATIC_URL = '/static/'
-STATIC_url = 'https://s3.amazonaws.com/assets.intros.to/'
+STATIC_URL = 'https://s3.amazonaws.com/assets.intros.to/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -80,7 +80,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '_*3ewwbxwo7v@$m8&amp;!+4+=k5*6&amp;yv6654p*&amp;^k4*azr(!a3-xr'
+SECRET_KEY = 'NO'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -112,7 +112,7 @@ TEMPLATE_DIRS = (
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     # ...
-    'django_browserid.context_processors.browserid_form',
+    'django_browserid.context_processors.browserid',
     # ...
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
@@ -202,6 +202,10 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
         },
+        'django_browserid': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
         'django.request': {
             'handlers': ['console'],
             'level': 'ERROR',
@@ -212,15 +216,17 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'django_browserid': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        }
     }
 }
 
+# Moved to settings.py so that I can check them in
 LOGIN_REDIRECT_URL = "/introductions"
+# Path to redirect to on unsuccessful login attempt.
+LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGIN_URL = "/"
+SESSION_COOKIE_SECURE = False
+SITE_URL = 'http://introduction.es'
+ALLOWED_HOSTS = ('introduction.es','intros.to')
 
 # Find any .conf files under a settings dir in the same basedir as settings.py
 # and import them.  This is processed before local_settings so that it can

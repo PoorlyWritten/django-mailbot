@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load browserid %}
 <!DOCTYPE html>
 
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
@@ -48,6 +49,7 @@
 
 </head>
 <body>
+{% browserid_info %}
     <div class="contain-to-grid top-bar-wrap fixed">
       <nav class="top-bar">
         <ul>
@@ -78,19 +80,11 @@
               {% endcomment %}
 {% if not user.is_authenticated %}
           <li>
-<a class="browserid-login" href="#">Sign In</a>
-<form method="POST" action="{% url "browserid_verify" %}">
-   {% csrf_token %}
-   {{ browserid_form.as_p }}
-</form>
-</li>
+          {% browserid_login text='Sign In' %}
+        </li>
           <li>
-<a class="browserid-login" href="#">Register</a>
-<form method="POST" action="{% url browserid_verify %}">
-   {% csrf_token %}
-   {{ browserid_form.as_p }}
-</form>
-</li>
+          {% browserid_logout text='Log Out' %}
+        </li>
 {% else %}
 {% include 'partials/right_nav_logged_in.html' %}
 {% endif %}
@@ -126,7 +120,6 @@
           <ul class="link-list right">
               {% comment %}<li><a href="/pricing">Pricing</a></li>{% endcomment %}
             <li><a href="mailto:contacts@intros.to">Contact Us</a></li>
-            <li><a href="https://oneleap.to">OneLeap.to</a></li>
           </ul>
         </div>
       </div>
@@ -169,12 +162,14 @@
     <script src="{% static "javascripts/foundation/jquery.foundation.tooltips.js" %}"></script>
 	
     <script src="{% static "javascripts/foundation/jquery.foundation.topbar.js" %}"></script>
+
+    <script src="{% static "javascripts/foundation/jquery.foundation.utils.js" %}"></script>
 	
     <script src="{% static "javascripts/foundation/jquery.placeholder.js" %}"></script>
 	
 
   <!-- Application Javascript, safe to override -->
-<script src="{% static "browserid/browserid.js" %}"></script>
+{% browserid_js %}
 <script src="/javascripts/foundation/app.js" ></script>
 {% block modals %}
 {% endblock %}

@@ -23,8 +23,14 @@ class RawEmailAdmin(admin.ModelAdmin):
     def id(self):
         return self.pk
 
+class EmailProfileAdmin(admin.ModelAdmin):
+    search_fields = ['user__email', 'user__first_name', 'user__last_name' ]
+    #list_display = ('user__first_name', 'user_last_name', 'user__username', 'user__email', 'date_added')
+
+class EmailAddressAdmin(admin.ModelAdmin):
+    search_fields = ['email_address', 'full_name' ]
 
 admin.site.register(RawEmail, RawEmailAdmin)
-admin.site.register(EmailAddress)
-admin.site.register(EmailProfile)
+admin.site.register(EmailAddress, EmailAddressAdmin)
+admin.site.register(EmailProfile, EmailProfileAdmin)
 admin.site.register(TemplatedEmailMessage)

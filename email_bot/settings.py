@@ -57,11 +57,12 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = 'https://s3.amazonaws.com/assets.intros.to/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
+STATIC_url = 'https://s3.amazonaws.com/assets.intros.to/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -156,6 +157,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_QUERYSTRING_AUTH = False
 AWS_S3_SECURE_URLS = False
 BROWSERID_CREATE_USER = True
 
@@ -189,6 +191,10 @@ LOGGING = {
             'class': 'logging.handlers.SysLogHandler',
             'facility': SysLogHandler.LOG_USER,
         },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
     },
     'loggers': {
            '': {
@@ -196,11 +202,20 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
         },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
         'django.db.backends': {
             'handlers': ['null'],
             'level': 'DEBUG',
             'propagate': False,
         },
+        'django_browserid': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        }
     }
 }
 

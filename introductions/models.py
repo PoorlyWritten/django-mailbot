@@ -132,7 +132,6 @@ class IntroductionManager(models.Manager):
         return intro
 
 
-
 class Introduction(models.Model):
     id = UUIDField(primary_key=True, auto=True, version=4)
     connector = models.ForeignKey(User)
@@ -172,6 +171,15 @@ class Introduction(models.Model):
             followup2.save()
         except IntegrityError:
             pass
+
+
+class IntroductionProfile(models.Model):
+    user         = models.OneToOneField(User)
+    location     = models.CharField(max_length=256)
+    headline     = models.CharField(max_length=256)
+    description  = models.CharField(max_length=256)
+
+
 
 def parse_one_mail(raw_message_id):
     logger.debug("parse_one_mail was called...")

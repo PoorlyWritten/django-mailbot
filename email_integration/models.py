@@ -1,5 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
+import datetime
+from django.utils.timezone import utc
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -95,11 +97,29 @@ def _tx_create_email_address(addr):
 class EmailProfile(models.Model):
     """A class to manage the relationship between e-mail addresses and people"""
     id = UUIDField(primary_key=True, auto=True, version=4)
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     date_added = models.DateTimeField(auto_now_add=True)
+    date_approved = models.DateTimeField(null=True, default=None)
 
     def __unicode__(self):
         return self.user.__unicode__()
+
+    @property
+    def is_approved(self):
+        if not self.date_approved:
+            return False
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        if self.date_approved <= now:
+            return True
+        return False
+
+
+class EmailWhitelist(models.Model):
+    email_address = models.EmailField(unique=True)
+    activated = models.DateTimeField(null=True)
+
+    def __unicode__(self):
+        return self.email_address
 
 
 class RawEmail(models.Model):
@@ -117,7 +137,10 @@ class RawEmail(models.Model):
 
     def _get_header(self, header_name):
         if not self.msg:
-            self.msg = email.message_from_string(self.content)
+            try:
+                self.msg = email.message_from_string(self.content)
+            except UnicodeEncodeError:
+                self.msg = email.message_from_string(self.content.encode('utf-8'))
         header_content = decode_header(self.msg.get(header_name, ''))
         return_content = u''
         for line in header_content:
@@ -262,23 +285,35 @@ def reconcile_names(sender, **kwargs):
 
 def create_emailprofile(sender, **kwargs):
     user = kwargs['instance']
-    user_profile, created = EmailProfile.objects.get_or_create(user=user)
+    try:
+        user_profile = EmailProfile.objects.get(user=user)
+        created = False
+    except EmailProfile.DoesNotExist:
+        user_profile = EmailProfile(user=user)
+        created = True
     if created:
-        logger.debug("Created profile for %s" % user_profile.user.email)
+        logger.debug("Created profile for %s" % user.email)
+        # Check the whitelist
+        try:
+            whitelist_entry = EmailWhitelist.objects.get(email_address=user.email)
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+            whitelist_entry.activated = now
+            whitelist_entry.save()
+            user_profile.date_approved = now
+        except EmailAddress.DoesNotExist:
+            pass
+        user_profile.save()
     email_addr, created = EmailAddress.objects.get_or_create_email(user.email,
                                                           verification_complete=True,
                                                           user_profile = user_profile)
     if created:
         logger.debug("Created email_address for %s" % user.email)
     logger.debug("user for %s is %s" % (user.email, email_addr.user_profile.user))
-    try:
-        email_addr.save()
-    except:
-        pass
 
 def send_welcome_email(sender, *args, **kwargs):
-    user = kwargs['instance']
-    if user.pk == None:
+    profile = kwargs['instance']
+    user = profile.user
+    if user.pk == None and profile.is_approved:
         template = TemplatedEmailMessage.objects.get(name="ConnectorWelcome")
         context_dict = dict(
                 connector = user.get_full_name()
@@ -294,4 +329,4 @@ def send_welcome_email(sender, *args, **kwargs):
 post_save.connect(create_emails, sender=RawEmail)
 post_save.connect(reconcile_names, sender=EmailAddress)
 post_save.connect(create_emailprofile, sender=User)
-pre_save.connect(send_welcome_email, sender=User)
+pre_save.connect(send_welcome_email, sender=EmailProfile)

@@ -34,8 +34,7 @@ class OLHomeView(OLTemplateView):
             request.user.is_anonymous(),
             request.user,
             request.user.is_authenticated()))
-        if request.user.is_authenticated():
+        if request.user.is_authenticated() and request.user.emailprofile.is_approved:
             return HttpResponseRedirect('/introductions')
         else:
             return super(OLHomeView, self).dispatch(request, *args, **kwargs)
-

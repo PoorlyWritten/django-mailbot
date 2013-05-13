@@ -5,7 +5,22 @@ from django.views.generic.detail import DetailView
 from .forms import VerifyEmailForm
 from .models import EmailAddress, EmailProfile
 from email_bot.views import OLContextMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
 
+def is_approved(user):
+    try:
+        profile = EmailProfile.objects.get(user=user)
+    except EmailProfile.DoesNotExist:
+        return False
+    return profile.is_approved
+
+
+class ProtectedViewMixin(object):
+
+    @method_decorator(user_passes_test(is_approved, login_url='/comingsoon'))
+    def dispatch(self, *args, **kwargs):
+        return super(ProtectedViewMixin, self).dispatch(*args, **kwargs)
 
 
 

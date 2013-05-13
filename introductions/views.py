@@ -3,12 +3,13 @@ logger = logging.getLogger(__name__)
 from django.views.generic import ListView, UpdateView, DetailView, FormView
 from django.views.generic.detail import SingleObjectMixin
 from .models import Introduction, FollowUp
-from .forms import FollowUpForm, RequestFollowUpForm
+from .forms import FollowUpForm, RequestFollowUpForm, IntroductionProfileForm
 from email_bot.views import OLContextMixin
 from email_integration.models import TemplatedEmailMessage
+from email_integration.views import ProtectedViewMixin
 from django.template import Template, Context
 
-class IntroductionListView(OLContextMixin, ListView):
+class IntroductionListView(ProtectedViewMixin, OLContextMixin, ListView):
     #model = Introduction
     heading = "Track your introductions"
 
@@ -16,7 +17,8 @@ class IntroductionListView(OLContextMixin, ListView):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
         return Introduction.objects.filter(connector = self.request.user).order_by('-created')
 
-class IntroductionDetailView(OLContextMixin, DetailView):
+
+class IntroductionDetailView(ProtectedViewMixin, OLContextMixin, DetailView):
     model = Introduction
     slug_field='id'
 
@@ -24,7 +26,8 @@ class IntroductionDetailView(OLContextMixin, DetailView):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
         return Introduction.objects.filter(connector = self.request.user)
 
-class IntroductionNotificationRequestView(OLContextMixin, DetailView):
+
+class IntroductionNotificationRequestView(ProtectedViewMixin, OLContextMixin, DetailView):
     template_name = 'introduction/notify.html'
     heading = "Email Requests Sent!"
     model = Introduction
@@ -46,7 +49,8 @@ class IntroductionNotificationRequestView(OLContextMixin, DetailView):
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
-class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
+
+class RequestFeedbackFormView(ProtectedViewMixin, OLContextMixin, SingleObjectMixin, FormView):
     template_name = 'introductions/notify.html'
     heading = "Email Requests Sent!"
     model = Introduction
@@ -143,3 +147,27 @@ class FollowUpUpdate(OLContextMixin, UpdateView):
             'introduction': self.object.introduction,
         })
         return super(FollowUpUpdate, self).form_valid(form)
+
+
+
+class ProfileSettingsView(FormView):
+    template_name = "settings.html"
+    form_class = IntroductionProfileForm
+
+    def get_initial(self):
+        initial = super(ProfileSettingsView, self).get_initial()
+        initial.update({
+            'first_name' : self.request.user.first_name,
+            'last_name' : self.request.user.last_name,
+        })
+        return initial
+
+    def form_valid(self, form):
+        self.request.user.first_name  = form.cleaned_data['first_name']
+        self.request.user.last_name  = form.cleaned_data['last_name']
+        self.request.user.save()
+        return super(ProfileSettingsView, self).form_valid(form)
+
+
+
+

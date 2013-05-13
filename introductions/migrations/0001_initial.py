@@ -42,6 +42,16 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('introductions', ['Introduction'])
 
+        # Adding model 'IntroductionProfile'
+        db.create_table('introductions_introductionprofile', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=256)),
+            ('headline', self.gf('django.db.models.fields.CharField')(max_length=256)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=256)),
+        ))
+        db.send_create_signal('introductions', ['IntroductionProfile'])
+
 
     def backwards(self, orm):
         # Removing unique constraint on 'FollowUp', fields ['introduction', 'email']
@@ -52,6 +62,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Introduction'
         db.delete_table('introductions_introduction')
+
+        # Deleting model 'IntroductionProfile'
+        db.delete_table('introductions_introductionprofile')
 
 
     models = {
@@ -126,6 +139,14 @@ class Migration(SchemaMigration):
             'introducee2': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             'message': ('django.db.models.fields.TextField', [], {}),
             'subject': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
+        },
+        'introductions.introductionprofile': {
+            'Meta': {'object_name': 'IntroductionProfile'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'headline': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         }
     }
 

@@ -10,9 +10,11 @@
               </a>
             <ul class="dropdown">
               <li><label>Email Addresses</label></li>
-              {% for addr in user.emailprofile.emailaddress_set.all %}
+              {% if my_addrs %}
+              {% for addr in my_addrs %}
               <li><a href=#>{{ addr.email_address }}</a></li>
               {% endfor %}
+              {% endif %}
               <li><a href="/verify">Add another email address</a></li>
               <li class="divider"></li>
               {% if user.emailprofile.is_approved %}
@@ -22,8 +24,8 @@
               {% endif %}
               <li><label>Settings</label></li>
               <li><a href="/my/profile">My Profile</a></li>
-              {% comment %}<li><a href="/my/settings">Email Settings</a></li>{% endcomment %}
-              <li><a href="{% url avatar_change %}">Change your picture</a></li>
+              <li><a href="/my/settings">Email Settings</a></li>
+              <li><a href="{% url "avatar_change" %}">Change your picture</a></li>
               <li class="divider"></li>
               <li><a href="/logout" class="browserid-logout">Log out</a></li>
             </ul>

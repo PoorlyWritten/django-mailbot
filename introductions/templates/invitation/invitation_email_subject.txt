@@ -1,0 +1,1 @@
+{{ invitation.user.get_full_name }} has invited you to {{ site.name }}

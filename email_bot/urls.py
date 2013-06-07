@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('introductions.urls')),
+    url(r'', include('invitation.urls')),
     url(r'', include('email_integration.urls')),
     (r'^browserid/', include('django_browserid.urls')),
     (r'^avatar/', include('avatar.urls')),
@@ -24,7 +25,8 @@ urlpatterns = patterns('',
     (r'^pricing$', OLTemplateView.as_view(template_name="pricing.html")),
     (r'^comingsoon$', OLTemplateView.as_view(template_name="comingsoon.html")),
     (r'^dev/introductions$', OLTemplateView.as_view(template_name="introduction.html")),
-    (r'^dev/main$', OLTemplateView.as_view(template_name="main.html")),
-    (r'^logout$', logout_then_login),
+    (r'^dev/main$', OLTemplateView.as_view(template_name="dashboard.html")),
+    (r'^login/?$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    (r'^logout/?$', logout_then_login),
 )
 

@@ -1,12 +1,20 @@
 import logging
 logger = logging.getLogger(__name__)
 from django import forms
-from .models import FollowUp, IntroductionProfile
+from .models import FollowUp, IntroductionProfile, IntroductionPreferences
+
+class RangeInput(forms.widgets.Input):
+    """HTML5 Range Input"""
+    input_type = 'range'
+
 
 class FollowUpForm(forms.ModelForm):
     class Meta:
         model = FollowUp
-        fields = ('name', 'email', 'comment')
+        fields = ('name', 'email', 'comment', 'rating')
+        widgets = {
+            'rating': RangeInput(),
+            }
 
 class RequestFollowUpForm(forms.Form):
     introducee1_message = forms.CharField (widget=forms.widgets.Textarea(attrs={'rows':8,'cols':72}) )
@@ -19,7 +27,24 @@ class IntroductionProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=64)
     last_name = forms.CharField(max_length=64)
     error_css_class = "error"
+    required_css_class = "required"
+
     class Meta:
         model = IntroductionProfile
         exclude = ('user',)
+        fields = [
+                'first_name',
+                'last_name',
+                'location',
+                'headline',
+                'position',
+                'company',
+                'description',
+        ]
 
+class IntroductionPreferenceForm(forms.ModelForm):
+    error_css_class = "error"
+    required_css_class = "required"
+    class Meta:
+        model = IntroductionPreferences
+        exclude = ('user',)

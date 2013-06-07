@@ -1,4 +1,4 @@
-@import "foundation/common/ratios";
+// @import "foundation/common/ratios";
 
 // Settings file containing Foundation defaults
 
@@ -21,6 +21,28 @@ $rowWidth: 940px;
 // $textDirection: ltr; // Controls default global text direction, 'rtl' or 'ltr'
 
 // Colors Settings 
+// $body-bg: #fff;
+$body-bg: rgb(240,240,240);
+$myintros-bg: rgb(245,245,245);
+// $body-font-color: #222;
+// $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+// $body-font-weight: normal;
+// $body-font-style: normal;
+
+
+$introsYellow: rgb(250,209,51);
+$primary-color: #2ba6cb;
+$secondary-color: #e9e9e9;
+// $alert-color: #c60f13;
+// $success-color: #5da423;
+$white: rgb(255,255,255);
+$black: #000;
+
+$myintros-bg: rgb(240,240,240);
+// $body-font-color: #222;
+// $body-font-family: "
+// $body-font-weight: normal;
+// $body-font-style: normal;
 
 $mainColor: #F8CB25; //Action yelow
 $mainColorAccent: #FFDB1B; //Action yellow highlight

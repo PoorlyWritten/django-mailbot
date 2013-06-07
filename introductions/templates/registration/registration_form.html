@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Welcome to {{ site.name }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="small-9 columns small-centered">
+        <form method=POST class="custom">
+        {% csrf_token %}
+        {{ form }}
+        <input type=submit name="Get Started!" />
+        </form>
+    </div>
+</div>
+{% endblock %}

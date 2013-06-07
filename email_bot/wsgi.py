@@ -20,6 +20,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "oneleap_email_bot.settings")
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
+import djcelery
+djcelery.setup_loader()
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 

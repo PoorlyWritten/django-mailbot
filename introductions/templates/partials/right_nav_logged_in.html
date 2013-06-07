@@ -1,0 +1,33 @@
+{% load browserid %}
+{% load avatar_tags %}
+          <li class="has-dropdown emphasis alternate-style">
+              <a href="#" class="current-user">
+                {% avatar user 50 %}
+                {% if user.first_name %}
+                Hi {{ user.first_name }}!
+                {% else %}
+                Hi!
+                {% endif %}
+              </a>
+            <ul class="dropdown">
+              <li><label>Email Addresses</label></li>
+              {% if my_addrs %}
+              {% for addr in my_addrs %}
+              <li><a href=#>{{ addr.email_address }}</a></li>
+              {% endfor %}
+              {% endif %}
+              <li><a href="/verify">Add another email address</a></li>
+              <li class="divider"></li>
+              {% if user.emailprofile.is_approved %}
+              <li><label>Introductions</label></li>
+              <li><a href="/introductions">My introductions</a></li>
+              <li class="divider"></li>
+              {% endif %}
+              <li><label>Settings</label></li>
+              <li><a href="/my/profile">My Profile</a></li>
+              <li><a href="/my/settings">Email Settings</a></li>
+              <li><a href="{% url "avatar_change" %}">Change your picture</a></li>
+              <li class="divider"></li>
+              <li>{% browserid_logout text='Log Out' %}</li>
+            </ul>
+            </li>

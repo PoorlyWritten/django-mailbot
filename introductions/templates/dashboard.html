@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load avatar_tags %}
+<body id="dashboard" class="yui3-skin-sam">
+{% block title %}Intros ({{ object_list|length }}){% endblock %}
+
+{% block content %}
+<div class="headerwrapper">
+<div class="header">
+    <div class="headerimage">
+{% avatar user 200 %}
+    </div>
+    <div class="headerinfo">
+        <p class="welcome">Welcome back {{ user.first_name|title }}!</p>
+        <p class="greeting">{{ object_list|length }} introduction{{ object_list|length|pluralize }} so far!</p>
+    </div>
+</div>
+</div>
+<div class="stats">
+<div class="row">
+    <div class="statswrapper">
+        <h4>intro stats</h4>
+        <div class="graph">
+            <div class="row">
+                <div class="small-9 columns">
+                    <h3>{{ object_list|length }} Intros</h3>
+                    <p>X intros this week</p>
+                </div>
+                <div class="small-3 columns">
+                    <div class="button small secondary">This week x</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <img src="http://placehold.it/500x200">
+                </div>
+            </div>
+            <div class="summary row">
+                <div class="small-6 columns">
+                    <h3>21</h3>
+                    <p>intros last week</p>
+                </div>
+                <div class="small-6 columns">
+                    <h3>9</h3>
+                    <p>average per week</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="statswrapper">
+        <h4>feedback stats</h4>
+    <div class="graph">
+        <img src="http://placehold.it/500x200">
+    </div>
+    </div>
+</div>
+<div class="row">
+    <div class="statswrapper">
+        <h5>Most Introduced</h5>
+        <div class="leaderboard">
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+        </div>
+    </div>
+
+    <div class="statswrapper">
+        <h5>Biggest Fans</h5>
+        <div class="leaderboard">
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+        </div>
+    </div>
+</div>
+</div>
+<div class="myintros">
+    <div class="row">
+        <div class="title">Recent Intros</div>
+        <div class="listcontrols">
+                <span>sort by</span>
+                <span class="controlbutton">received feedback</span>
+                <span class="controlbutton">type of feedback</span>
+                <span class="controlbutton">top rated</span>
+                <span class="controlbutton">date</span>
+        </div>
+    </div>
+    <div class="introslist">
+    {% for object in object_list %}
+    {% include "introductions/_dashboard_list_item.html" %}
+    {% endfor %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="befriendly">
+        <h4>Love Intros?</h4>
+        <div class="invitefriends">Invite your Friends!</div>
+    </div>
+</div>
+
+{% endblock %}

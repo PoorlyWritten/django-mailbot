@@ -1,0 +1,10 @@
+Hey!
+
+    I'm really enjoying {{ site.name }} where I can track my introductions.  It's the kind of thing I think you'll like too so I've shared an invitation with you.
+Your activation link is: 
+http://{{site.domain}}{{ invitation.get_absolute_url }}
+
+Hope you like it!
+
+- {{ invitation.user.get_full_name }}
+

@@ -4,11 +4,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models, IntegrityError
 from django_extensions.db.fields import UUIDField
-from djangoratings.fields import AnonymousRatingField
 from email_integration.models import RawEmail, EmailAddress, TemplatedEmailMessage
 from email_integration.send_mails import request_feedback_email
 import datetime
 import os
+import re
 
 class NullableCharField(models.CharField):
     description = "CharField that obeys null=True"
@@ -42,6 +42,8 @@ class FollowUpManager(models.Manager):
     def requested(self):
         return super(FollowUpManager, self).all().exclude(requested=None).order_by("-requested")
 
+    def rated(self):
+        return super(FollowUpManager, self).all().exclude(rating=None).order_by("-requested")
 
 
 class FollowUp(models.Model):
@@ -56,7 +58,7 @@ class FollowUp(models.Model):
     comment = models.TextField(null=True,blank=True)
     requested = models.DateTimeField(null=True, blank=True)
     added = models.DateTimeField(auto_now=True)
-    rating = AnonymousRatingField(range=10)
+    rating = models.PositiveSmallIntegerField(default=75)
     objects = FollowUpManager()
 
     class Meta:
@@ -123,12 +125,13 @@ class IntroductionManager(models.Manager):
         )
         intro.save()
         logger.debug("Just created an introduction.  It's pk is : %s" % intro.pk)
-        try:
-            email = TemplatedEmailMessage.objects.get(name="IntroductionRegistered")
-            email.send(to_email=connector.email, context_dict={'connector_name': connector.get_full_name(), 'introduction':intro })
-        except Exception, error:
-            pass
-            logger.debug("Couldn't send mail announcing an intro made by %s because: %s" % ( connector, error))
+        if connector.introductionpreferences.auto_send_feedback_requests:
+            try:
+                email = TemplatedEmailMessage.objects.get(name="IntroductionRegistered")
+                email.send(to_email=connector.email, context_dict={'connector_name': connector.get_full_name(), 'introduction':intro })
+            except Exception, error:
+                pass
+                logger.debug("Couldn't send mail announcing an intro made by %s because: %s" % ( connector, error))
         return intro
 
 
@@ -149,6 +152,11 @@ class Introduction(models.Model):
     @property
     def from_name(self):
        return self.email_message.sent_by_name
+
+    @property
+    def clean_message(self):
+        replacer = re.compile("\n(From|Content-Type:)\ .*\n")
+        return replacer.sub('\n',replacer.sub('\n',self.message)).lstrip("\n")
 
     def create_followups(self):
         followup1 = FollowUp(
@@ -175,10 +183,17 @@ class Introduction(models.Model):
 
 class IntroductionProfile(models.Model):
     user         = models.OneToOneField(User)
-    location     = models.CharField(max_length=256)
-    headline     = models.CharField(max_length=256)
-    description  = models.CharField(max_length=256)
+    location     = models.CharField(max_length=256, blank=True, null=True, default=None)
+    headline     = models.CharField(max_length=256, blank=True, null=True, default=None)
+    description  = models.CharField(max_length=256, blank=True, null=True, default=None)
+    position  = models.CharField(max_length=256, blank=True, null=True, default=None)
+    company  = models.CharField(max_length=256, blank=True, null=True, default=None)
 
+class IntroductionPreferences(models.Model):
+    user         = models.OneToOneField(User)
+    send_gotcha_notifications = models.BooleanField(default=True)
+    auto_send_feedback_requests = models.BooleanField(default=False)
+    send_monthly_summary = models.BooleanField(default=True)
 
 
 def parse_one_mail(raw_message_id):
@@ -227,5 +242,11 @@ def test_signal_handler(sender, **kwargs):
     logger.debug('test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__)
     print 'test_signal_handler - instance.__dict__ = %s' % kwargs['instance'].__dict__
 
+def create_introduction_profiles(sender, **kwargs):
+    user = kwargs['instance']
+    IntroductionProfile.objects.get_or_create(user=user)
+    IntroductionPreferences.objects.get_or_create(user=user)
+
+post_save.connect(create_introduction_profiles, sender=User)
 #post_save.connect(test_signal_handler)
 post_save.connect(parse_mail, sender=RawEmail)

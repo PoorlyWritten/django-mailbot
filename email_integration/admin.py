@@ -25,6 +25,7 @@ parse_messages.short_description= "Parse each of the marked messages"
 
 class RawEmailAdmin(admin.ModelAdmin):
     list_display = ('id', 'subject', 'date_added', 'parsed')
+    filter_horizontal = ('email_addresses', )
     actions = [parse_messages]
     def id(self):
         return self.pk

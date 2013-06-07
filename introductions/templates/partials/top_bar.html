@@ -1,0 +1,25 @@
+<div class="top-bar-wrap">
+    <nav class="top-bar">
+          <ul class="title-area">
+            <!-- Title Area -->
+            <li class="name">
+              <h1><a href="/"><img src="/images/logobeta.png"></a></h1>
+            </li>
+            <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+            <li class="toggle-topbar menu-icon"><a href=""><span>Menu</span></a></li>
+          </ul>
+        <section class="top-bar-section">
+            <ul class="right">
+              <li class="divider"></li>
+              <li><a href="/introductions">My Introductions</a></li>
+{% if user.is_staff %}
+              <li><a href="/admin">Admin</a></li>
+{% endif %}
+{% if user.is_authenticated %}
+{% include "partials/right_nav_logged_in.html" %}
+{% endif %}
+              <li class="divider"></li>
+            </ul>
+          </section>
+      </nav>
+  </div>

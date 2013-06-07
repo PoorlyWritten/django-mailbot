@@ -1,0 +1,34 @@
+{% load avatar_tags %}
+          <li class="has-dropdown emphasis alternate-style">
+              <a href="#" class="current-user">
+                {% avatar user 50 %}
+                {% if user.first_name %}
+                Hi {{ user.first_name }}!
+                {% else %}
+                Hi!
+                {% endif %}
+              </a>
+            <ul class="dropdown">
+              <li><label>Email Addresses</label></li>
+              {% for addr in user.emailprofile.emailaddress_set.all %}
+              <li><a href=#>{{ addr.email_address }}</a></li>
+              {% endfor %}
+              <li><a href="/verify">Add another email address</a></li>
+              <li class="divider"></li>
+              {% if user.emailprofile.is_approved %}
+              <li><label>Introductions</label></li>
+              <li><a href="/introductions">My introductions</a></li>
+              <li class="divider"></li>
+              {% endif %}
+              <li><label>Settings</label></li>
+              <li><a href="/my/profile">My Profile</a></li>
+              {% comment %}<li><a href="/my/settings">Email Settings</a></li>{% endcomment %}
+<<<<<<< HEAD
+              <li><a href="{% url avatar_change %}">Change your picture</a></li>
+=======
+              {% comment %}<li><a href="{% url "avatar_change" %}">Change your picture</a></li>{% endcomment %}
+>>>>>>> 180dca64288db298d1b58ca75f3719bebb58155c
+              <li class="divider"></li>
+              <li><a href="/logout" class="browserid-logout">Log out</a></li>
+            </ul>
+            </li>

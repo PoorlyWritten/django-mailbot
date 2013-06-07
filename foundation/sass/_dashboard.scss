@@ -1,0 +1,150 @@
+.card {
+    margin-top: emCalc(20px);
+    margin-bottom: emCalc(20px);
+    padding-top: emCalc(20px);
+    background-color: $white;
+}
+
+div.statswrapper {
+    @extend .small-6, .columns;
+    margin-top: emCalc(20px);
+    h4 {
+        font-variant: small-caps;
+        color: $primary-color;
+        margin-bottom: 0;
+    }
+}
+div.headerwrapper {
+    margin-top: emCalc($topbar-height);
+    padding-top: emCalc(20px);
+    padding-bottom: emCalc(20px);
+    border-bottom: emCalc(3px) solid $secondary-color;
+    background-image: url(http://s3-eu-west-1.amazonaws.com/assets.oneleap.to/img/striped-bg2.png);
+    div.header {
+        @extend .row;
+        .headerimage {
+            @extend .small-2, .columns;
+        }
+        .headerinfo {
+            @extend .small-10, .columns;
+            p.welcome {
+                font-size: 3em;
+                margin-bottom: 0;
+            }
+            p.greeting {
+                font-size: 2em;
+                font-weight: bold;
+                color: $introsYellow;
+            }
+        }
+    }
+}
+
+div.leaderboard {
+    margin-left: emCalc(5px);
+    margin-right: emCalc(5px);
+    span.name {
+        @extend .small-8, .columns;
+    }
+    span.amount {
+        @extend .small-1, .columns;
+        text-align: right;
+    }
+    p {
+        background-color: $white;
+        &:first-child {
+            padding-top: emCalc(10px);
+        }
+        &:last-child {
+            padding-bottom: emCalc(10px);
+        }
+    }
+}
+
+div.myintros {
+    margin-top: emCalc(20px);
+    margin-bottom: emCalc(-15px);
+    div.title {
+        @extend .small-4, .columns;
+        font-size: 1.125em;
+        line-height: 1.4;
+    }
+
+    div.listcontrols {
+        @extend .small-8, .columns;
+        text-align: right;
+        span.controlbutton {
+        @extend .button, .secondary, .small;
+        }
+    }
+}
+
+div.graph {
+    @extend .card;
+    margin-top: 0;
+    padding-left: emCalc(2px);
+    padding-right: emCalc(2px);
+    padding-bottom: emCalc(2px);
+    div.summary {
+        margin-right: 0;
+        margin-left: 0;
+        margin-top: emCalc(-2px);
+        margin-bottom: emCalc(1px);
+        background-color: $secondary-color;
+    }
+}
+
+div.myintros {
+    background-color: $myintros-bg;
+    padding-top: emCalc(20px);
+    padding-bottom: emCalc(20px);
+    border-bottom: emCalc(3px) solid $secondary-color;
+    border-top: emCalc(3px) solid $secondary-color;
+}
+
+div.introitem {
+    @extend .row, .card;
+    &:first {
+        margin-top: 0;
+    }
+    div.connectors {
+            @extend .small-10, .small-centered, .columns;
+            border-bottom: emCalc(3px) solid $secondary-color;
+    }
+    div.introduction {
+        margin-top: emCalc(20px);
+        margin-bottom: emCalc(20px);
+        @extend .small-10, .small-centered, .columns;
+    }
+    p.subject {
+        font-weight: bold;
+        span.date {
+            color: $secondary-color;
+        }
+    }
+    div.details {
+        @extend .small-8, .columns;
+        border-right: emCalc(3px) solid $secondary-color;
+    }
+    div.feedback {
+        @extend .small-4, .columns;
+        text-align: center;
+
+    }
+    div.feedback-button {
+        @extend .button, .small, .radius;
+    }
+}
+div.befriendly {
+    @extend .small-3, .small-centered, .columns;
+    text-align: center;
+    div.invitefriends {
+        @extend .button, .medium, .round;
+    }
+}
+
+span.yui3-slider {
+    min-height: 20px;
+    background-image: linear-gradient(to right, white, $primary-color);
+}
+

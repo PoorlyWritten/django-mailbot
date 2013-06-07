@@ -5,6 +5,9 @@ from email_integration.models import RawEmail
 from celery.task import periodic_task
 from celery import task
 from celery.task.schedules import crontab
+from invitation.signals import invitation_added
+from django.contrib.sites.models import Site
+from email_integration.models import TemplatedEmailMessage
 
 @task
 def parse_one_mail_task(raw_message_id):
@@ -30,3 +33,23 @@ def parse_all_mail():
         logger.debug("Parsing Raw Email :  %s" % each.pk)
         parse_one_mail_task(each.pk)
 
+def send_invitation_email(sender, invitation, **kwargs):
+    print "Sending the invitation email as a result of the signal."
+    site = Site.objects.get_current()
+    try:
+        template = TemplatedEmailMessage.objects.get(name="InvitationEmail")
+        template.send(
+            context_dict = dict(
+                site = site,
+                invitation = invitation,
+            ),
+            #TODO: Make this use a default from address
+            from_email = "%s via %s <%s>" % (invitation.user.get_full_name(), site.name, "my@introduction.es"),
+            to_email = invitation.email
+        )
+    except TemplatedEmailMessage.DoesNotExist:
+        invitation.send_email()
+
+
+
+invitation_added.connect(send_invitation_email)

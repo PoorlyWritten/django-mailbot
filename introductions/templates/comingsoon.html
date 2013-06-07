@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row home-teaser">
+  <div class="twelve columns">
+      <div class="row">
+      <h1 class="primary-heading offset-top"><span class="large">Coming Soon</span></h1>
+      </div>
+      <div class="row panel">
+          <br />
+      <h4>Intros.to is an invite-only application to help you track the introductions you make.</h4>
+      {% if user.is_authenticated %}
+      <p> We've got your e-mail recorded as <strong>{{ user.email }}</strong> and will let you know when intros.to is ready for you.</p>
+      {% else %}
+        <a class="button medium browserid-login" href="#">Register your interest</a>
+        <form method="POST" action="{% url browserid_verify %}">
+           {% csrf_token %}
+           {{ browserid_form.as_p }}
+        </form>
+      {% endif %}
+      </div>
+    </div>
+</div>
+{% endblock %}

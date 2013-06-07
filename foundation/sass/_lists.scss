@@ -8,7 +8,7 @@ display: inline-block;
 text-align: center;
 padding: .25em;
 line-height: .735em;
-@include border-radius(1em);
+border-radius: 1em;
 }
 
 .list-highlighted {

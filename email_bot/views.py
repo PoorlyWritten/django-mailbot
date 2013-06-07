@@ -18,14 +18,16 @@ class OLContextMixin(object):
             pass
         if self.request.user.is_authenticated:
             try:
-                context['my_addrs'] = self.request.user.emailprofile_set.all()[0].emailaddress_set.all()
-                logger.debug('%s' % context['my_addrs'])
+                context['my_addrs'] = self.request.user.emailprofile.emailaddress_set.all()
+                logger.debug('myaddrs = %s' % context['my_addrs'])
             except:
+                logger.debug("Something went wrong trying to add the myaddrs thing")
                 pass
         return context
 
 class OLTemplateView(OLContextMixin, TemplateView):
     pass
+
 
 class OLHomeView(OLTemplateView):
     def dispatch(self, request, *args, **kwargs):

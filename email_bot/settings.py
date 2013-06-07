@@ -57,12 +57,12 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = 'https://s3.amazonaws.com/assets.intros.to/'
+STATIC_ROOT = 'https://s3.amazonaws.com/assets.staging.intros.to/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 #STATIC_URL = '/static/'
-STATIC_URL = 'https://s3.amazonaws.com/assets.intros.to/'
+STATIC_URL = 'https://s3.amazonaws.com/assets.staging.intros.to/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -131,8 +131,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tastypie',
+    'backbone_tastypie',
     'widget_tweaks',
     'avatar',
+    'registration',
+    'invitation',
     'email_integration',
     'oneleap_mailer',
     'introductions',
@@ -151,12 +155,14 @@ import djcelery
 djcelery.setup_loader()
 
 AUTHENTICATION_BACKENDS = (
+    'invitation.backend.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
     'django_browserid.auth.BrowserIDBackend',
     # ...
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_SECURE_URLS = False
 BROWSERID_CREATE_USER = True
@@ -223,10 +229,15 @@ LOGGING = {
 LOGIN_REDIRECT_URL = "/introductions"
 # Path to redirect to on unsuccessful login attempt.
 LOGIN_REDIRECT_URL_FAILURE = '/'
-LOGIN_URL = "/"
+LOGIN_URL = "/login"
 SESSION_COOKIE_SECURE = False
 SITE_URL = 'http://introduction.es'
 ALLOWED_HOSTS = ('introduction.es','intros.to')
+
+# Django registration
+ACCOUNT_ACTIVATION_DAYS = 7
+INVITATION_INVITE_ONLY = False
+INVITATION_EXPIRE_DAYS = 15
 
 # Find any .conf files under a settings dir in the same basedir as settings.py
 # and import them.  This is processed before local_settings so that it can

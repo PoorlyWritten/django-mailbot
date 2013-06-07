@@ -33,7 +33,7 @@ class TemplatedEmailMessage(models.Model):
         else:
             real_from = from_email
         msg = EmailMultiAlternatives(
-            self.subject,
+            Template(self.subject).render(Context(context_dict)),
             Template(self.text_content).render(Context(context_dict)),
             real_from,
             [to_email]
@@ -80,13 +80,26 @@ def isolate_name(address):
         return m.group('name').lstrip().rstrip().lstrip('"').rstrip('"')
     return None
 
+def _add_addr_to_email(email_list, email):
+    for each in email_list:
+        if each != '':
+            logger.debug("working with recipient: '%s'" % each)
+            newaddr = _tx_create_email_address(isolate_email(each))
+            try:
+                email.email_addresses.add(newaddr)
+            except Exception, error:
+                print "There's a problem with %s" % each
+                print error
 
 @transaction.commit_manually
 def _tx_create_email_address(addr):
     try:
         address, created = EmailAddress.objects.get_or_create_email(addr)
-        address.save()
-        transaction.commit()
+        if created:
+            address.save()
+            transaction.commit()
+        else:
+            transaction.rollback()
     except ValidationError, error:
         print "We've got an address validation problem here for %s : %s" % (addr,error)
         transaction.rollback()
@@ -122,6 +135,54 @@ class EmailWhitelist(models.Model):
         return self.email_address
 
 
+class EmailAddressManager(models.Manager):
+    def get_or_create_email(self, email_address, **kwargs):
+        normalized_email = isolate_email(email_address)
+        validate_email(normalized_email) #will throw exception on error
+        full_name = isolate_name(email_address)
+        if full_name:
+            kwargs['full_name'] = full_name
+        try:
+            addr = self.get(email_address=normalized_email)
+            logger.debug("Existing email address found for %s" % email_address)
+            for key,value in kwargs.iteritems():
+                setattr(addr,key, value)
+            created = None
+        except EmailAddress.DoesNotExist:
+            logger.debug("Creating new email address for %s" % email_address)
+            addr = self.create_email(normalized_email, **kwargs)
+            created = True
+        return addr, created
+
+    def create_email(self, email_address, **kwargs):
+        normalized_email = isolate_email(email_address)
+        validate_email(normalized_email) #will throw exception on error
+        attrs = dict(
+            email_address=normalized_email,
+            address_hash=hashlib.sha1(normalized_email).hexdigest(),
+            verification_hash=os.urandom(32).encode('hex'),
+            **kwargs
+        )
+        logger.debug("Creating email with attrs: %s" % attrs)
+        return EmailAddress(**attrs)
+
+
+class EmailAddress(models.Model):
+    id = UUIDField(primary_key=True, auto=True, version=4)
+    user_profile = models.ForeignKey(EmailProfile, null=True, blank=True)
+    email_address = models.EmailField(unique=True)
+    full_name = models.CharField(max_length=128, null=True, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    address_hash = models.CharField(max_length=128, null=True, blank=True, unique=True)
+    verification_hash = models.CharField(max_length=128, null=True, blank=True)
+    verification_email_sent = models.DateTimeField(null=True)
+    verification_complete = models.BooleanField(default=False)
+    objects = EmailAddressManager()
+
+    def __unicode__(self):
+        return self.email_address
+
+
 class RawEmail(models.Model):
     """A class to hold raw email"""
     id = UUIDField(primary_key=True, auto=True, version=4)
@@ -130,6 +191,7 @@ class RawEmail(models.Model):
     date_parsed = models.DateTimeField(null=True, blank=True)
     parsed = models.BooleanField(default=False)
     parsed_emails = models.BooleanField(default=False)
+    email_addresses = models.ManyToManyField(EmailAddress, null=True, default=None)
     msg = None
 
     def __unicode__(self):
@@ -198,66 +260,11 @@ class RawEmail(models.Model):
         return isolate_name(self.from_addr)
 
     def create_emails(self):
-        for each in self._get_header("To").split(','):
-            if each != '':
-                logger.debug("working with recipient: '%s'" % each)
-                _tx_create_email_address(each)
-        for each in self._get_header("Bcc").split(','):
-            if each != '':
-                logger.debug("working with recipient: '%s'" % each)
-                _tx_create_email_address(each)
-        for each in self._get_header("Cc").split(','):
-            if each != '':
-                logger.debug("working with recipient: '%s'" % each)
-                _tx_create_email_address(each)
-        _tx_create_email_address(self.isolated_from_addr)
-
-class EmailAddressManager(models.Manager):
-    def get_or_create_email(self, email_address, **kwargs):
-        normalized_email = isolate_email(email_address)
-        validate_email(normalized_email) #will throw exception on error
-        full_name = isolate_name(email_address)
-        if full_name:
-            kwargs['full_name'] = full_name
-        try:
-            addr = self.get(email_address=normalized_email)
-            logger.debug("Existing email address found for %s" % email_address)
-            for key,value in kwargs.iteritems():
-                setattr(addr,key, value)
-            created = None
-        except EmailAddress.DoesNotExist:
-            logger.debug("Creating new email address for %s" % email_address)
-            addr = self.create_email(normalized_email, **kwargs)
-            created = True
-        return addr, created
-
-    def create_email(self, email_address, **kwargs):
-        normalized_email = isolate_email(email_address)
-        validate_email(normalized_email) #will throw exception on error
-        attrs = dict(
-            email_address=normalized_email,
-            address_hash=hashlib.sha1(normalized_email).hexdigest(),
-            verification_hash=os.urandom(32).encode('hex'),
-            **kwargs
-        )
-        logger.debug("Creating email with attrs: %s" % attrs)
-        return EmailAddress(**attrs)
-
-
-class EmailAddress(models.Model):
-    id = UUIDField(primary_key=True, auto=True, version=4)
-    user_profile = models.ForeignKey(EmailProfile, null=True, blank=True)
-    email_address = models.EmailField(unique=True)
-    full_name = models.CharField(max_length=128, null=True, blank=True)
-    date_added = models.DateTimeField(auto_now_add=True)
-    address_hash = models.CharField(max_length=128, null=True, blank=True, unique=True)
-    verification_hash = models.CharField(max_length=128, null=True, blank=True)
-    verification_email_sent = models.DateTimeField(null=True)
-    verification_complete = models.BooleanField(default=False)
-    objects = EmailAddressManager()
-
-    def __unicode__(self):
-        return self.email_address
+        _add_addr_to_email(self._get_header("To").split(','), self)
+        _add_addr_to_email(self._get_header("Cc").split(','), self)
+        _add_addr_to_email(self._get_header("Bcc").split(','), self)
+        newaddr = _tx_create_email_address(self.isolated_from_addr)
+        self.email_addresses.add(newaddr)
 
 
 from django.db.models.signals import post_save, pre_save
@@ -300,15 +307,23 @@ def create_emailprofile(sender, **kwargs):
             whitelist_entry.activated = now
             whitelist_entry.save()
             user_profile.date_approved = now
-        except EmailAddress.DoesNotExist:
+        except EmailWhitelist.DoesNotExist:
             pass
         user_profile.save()
-    email_addr, created = EmailAddress.objects.get_or_create_email(user.email,
-                                                          verification_complete=True,
-                                                          user_profile = user_profile)
-    if created:
+    # Make sure that users own their own e-mail address.
+    email_addr, email_created = EmailAddress.objects.get_or_create(email_address = user.email)
+    if email_created:
         logger.debug("Created email_address for %s" % user.email)
-    logger.debug("user for %s is %s" % (user.email, email_addr.user_profile.user))
+        email_addr.verification_complete=True,
+        email_addr.user_profile = user_profile
+        email_addr.save()
+    else:
+        if email_addr.user_profile != user_profile:
+            print "%s was linked to someone else" % user.email
+            email_addr.user_profile = user_profile
+            email_addr.save()
+    logger.debug("in create_emailprofile signal handler: user for %s is %s" % (user.email, email_addr.user_profile.user))
+    print "in create_emailprofile signal handler: user for %s is %s" % (user.email, email_addr.user_profile.user)
 
 def send_welcome_email(sender, *args, **kwargs):
     profile = kwargs['instance']

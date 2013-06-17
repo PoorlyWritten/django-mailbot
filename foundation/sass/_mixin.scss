@@ -1,0 +1,79 @@
+//
+// header
+//
+
+@mixin header($padding-top: false, $padding-bottom: false) {
+    
+    margin-top: emCalc($topbar-height);
+    
+    @if $padding-top == false { padding-top: emCalc(20px); }
+    @else { padding-top: emCalc($padding-top); }
+    
+    @if $padding-bottom == false { padding-bottom: emCalc(20px); }
+    @else { padding-bottom: emCalc($padding-bottom); }
+    
+}
+
+
+//
+// card
+//
+@mixin card($margin-top: false, $margin-bottom: false, $padding: false) {
+    
+  background-color: $white;
+
+  // Margin Top
+  @if $margin-top == false { margin-top: emCalc(20px); }
+  @else { margin-top: emCalc($margin-top); }
+
+  // Margin Bottom
+  @if $margin-bottom == false { margin-bottom: emCalc(40px); }
+  @else { margin-bottom: emCalc($margin-bottom); }
+
+  // Padding
+  @if $padding == false { padding: emCalc(20px); }
+  @else { padding: emCalc($padding); }
+
+}
+
+
+//
+// css triangle / arrow
+//
+
+@mixin triangle($width: 20px, $height: 20px, $direction: up, $color: red) {
+  
+  width: 0;
+  height: 0;
+  
+  // Right
+  @if $direction == right {
+    border-top: $height/2 solid transparent;
+    border-bottom: $height/2 solid transparent;
+    border-left: $width solid $color;
+  }  
+
+  // Left
+  @if $direction == left {
+    border-top: $height/2 solid transparent;
+    border-bottom: $height/2 solid transparent;
+    border-right: $width solid $color;
+  }
+
+  // Up
+  @if $direction == up {
+    border-left: $width/2 solid transparent;
+    border-right: $width/2 solid transparent;
+    border-bottom: $height solid $color;
+    }
+
+  // Down
+  @if $direction == down {
+    border-left: $width/2 solid transparent;
+    border-right: $width/2 solid transparent;
+    border-top: $height solid $color;
+  }
+
+}
+
+

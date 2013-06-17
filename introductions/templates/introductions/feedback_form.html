@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}How excited are you?{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
+{% endblock %}
+{% block body_id %}feedback{% endblock %}
+{% block content %}
+<header>
+  <div class="row">
+    <div id="salute">
+      
+      <h1>Hi {{ object.email}}!</h1>
+      <hr />
+
+      <div class="salutation">
+          <p>{{ object.introduction.created|timesince }} ago, I introduced you to {{ object.other_email }}</p>
+        <p>Please tell me how it went so I can make better intros for you next time!</p>
+      </div>
+      <hr />
+
+    <h3 class="subheader">Message Contents</h3>
+    <h4>{{ object.introduction.subject }}</h4>
+      <div class="intro-summary closed">
+        <p>
+        {{ object.introduction.clean_message|linebreaksbr }}
+        </p>
+      </div>
+        <a href="#" class="seemore">Show/Hide Message</a>
+        <br />
+        <br />
+      <span class="triangle-bottom"></span>
+    </div>
+  </div>
+</header>
+<!-- /header -->
+
+<div id="feedback-form">
+  <div class="row">
+    <div id="form-content">
+      
+  <h2>How excited are you about this intro?</h2>
+
+  <h5>click the bar</h5>
+  <div id="excited-slider" class="noUiSlider horizontal-big"></div>
+
+  
+  <h3 id="slider-big-title"><img src="/images/icon-smiley.png" alt=""> I am <strong>super excited</strong> about this intro!</h3>
+  
+<form  method="post" id="Feedback" class="custom">
+    {% csrf_token %}
+  <textarea rows="4" cols="50" placeholder="Add a comment (optional)"></textarea>
+
+  <h4>If it's helped, please tell me how:<small>Select all that apply (optional)</small></h4>
+
+    <div class="row">
+      <div class="options">
+    <label for="recruiting">
+      <input name="recruiting" type="checkbox" id="id_recruiting" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-network-orange.png" alt=""> Recruiting
+    </label>
+  </div>
+      <div class="options">
+    <label for="partnerships">
+      <input name="partnerships" type="checkbox" id="id_partnerships" style="display:none;">
+      <span class="custom checkbox"></span>  <img src="/images/icon-partnership.png" alt=""> Partnership
+    </label>
+  </div>
+      <div class="options">
+    <label for="sales">
+      <input name="sales" type="checkbox" id="id_sales" style="display:none;">
+      <span class="custom checkbox"></span>  <img src="/images/icon-check.png" alt=""> Sales
+    </label>
+  </div>
+    </div>
+    <div class="row">
+      <div class="options">
+    <label for="networking">
+      <input name="networking" type="checkbox" id="id_networking" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-network-orange.png" alt=""> Networking</label>
+  </div>
+      <div class="options">
+    <label for="fundraising">
+      <input name="fundraising" type="checkbox" id="id_fundraising" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-check.png" alt=""> Raising Funds
+    </label>
+  </div>
+      <div class="options">
+    <label for="mentorship">
+      <input name="mentorship" type="checkbox" id="id_mentorship" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-cloud.png" alt=""> Mentorship
+    </label>
+  </div>
+    </div>
+    <div class="row">
+      <div class="options">
+    <label for="other">
+      <input name="other" type="checkbox" id="id_other" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-network-orange.png" alt=""> Other
+    </label>
+  </div>
+      <div class="options left">
+    <label for="toosoon">
+      <input name="toosoon" type="checkbox" id="id_toosoon" style="display:none;">
+      <span class="custom checkbox"></span> <img src="/images/icon-partnership.png" alt=""> Too soon to tell
+    </label>
+  </div>
+    </div>
+    <hr />
+<div class="row">
+<div class="form-button">  
+    <input type=submit class="button expand" />
+  </div>
+</div>
+
+{{ form.rating }}
+</form>
+</div>
+</div>
+</div>
+
+<footer>
+  <div class="row">
+    <div class="invite-now">
+      <p>Also want to use <strong>intros.to</strong> to track your intros? <strong>Request an invite now!</strong></p>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+{% block pagejs %}
+ <script>
+$(".seemore").click(function() { 
+    $('.intro-summary.closed').slideDown('slow', function(){$(this).addClass('open').removeClass('closed')}); 
+    $('.intro-summary.open').slideUp('slow', function(){$(this).addClass('closed').removeClass('open')}); 
+});
+
+    // slider
+    $("#excited-slider").noUiSlider({
+      range: [1, 1000],
+      start: 750,
+      handles: 1,
+      step: 1
+    });
+
+    // update expression
+    $(document).on('change', '#excited-slider', function() {
+
+      var currentValue = $('#excited-slider input').val();
+      var newValue;
+      $("#id_rating").val(parseInt(currentValue/10));
+      console.log($("#id_rating").val());
+       
+      if ((currentValue >= 1) && (currentValue <= 250)) {
+        newValue = 'not excited';
+      }
+      else if ((currentValue > 250) && (currentValue <= 500)) {
+        newValue = 'not sure';
+      }
+      else if ((currentValue > 500) && (currentValue <= 750)) {
+        newValue = 'pretty excited';
+      }
+      else if ((currentValue > 750) && (currentValue <= 1000)) {
+        newValue = 'super excited';
+      }
+
+      $('#slider-big-title strong').html(newValue);
+    });
+
+  </script>
+{% endblock %}

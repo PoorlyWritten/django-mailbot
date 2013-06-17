@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Welcome to Intros{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
+{% endblock %}
+{% block content %}
+<header>
+    <div class="row">
+        <h1><span>Welcome {{ user.first_name }}!</span>Let's get started</h1>
+    </div>
+</div>
+</header>
+<div class="row">
+    <div class="small-7 columns small-centered">
+    <h4 class="subheader">Track your first introduction now!</h4>
+        <div class=panel>
+        <p>Simply bcc <a href="mailto:my@intros.to">my@intros.to</a> wthe next time you make an introduction - and with every introduction you make</p>
+        <p>You can view all your introductions and feedback on them <a href="{% url "introduction_dashboard" %}">here</a> at any time.</p>
+        <p>The more introductions you bcc to <a href="mailto:my@intros.to">my@intros.to</a>, the better Intros will get at helping you understand and improve your introductions.</p>
+        <a href="{% url "introduction_dashboard" %}" class="button medium">Continue</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

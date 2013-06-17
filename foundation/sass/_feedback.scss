@@ -1,0 +1,173 @@
+//
+// header section
+//
+
+body#feedback header {
+    @include header(false, false);
+    border-bottom: 2px solid rgb(233,233,233);
+	text-align: center;
+	background-image: url('../images/feedback-header-bg.png');
+	background-size: cover;
+	
+	#salute {
+        @include grid-column(9, true, true);
+		position: relative;
+		&:after {
+	        @include triangle(80px, 24px, down, rgb(233,233,233));
+	        content: '';
+	        left: 0;
+	        margin: 0 0 0 200px;
+	        position: absolute;
+	        bottom: -45px;
+		}
+		.triangle-bottom {
+			@include triangle(78px, 22px, down, #f8f8f8);
+	        content: '';
+	        left: 0;
+	        margin: 0 0 0 201px;
+	        position: absolute;
+	        bottom: -42px;
+	        z-index: 1;
+		}
+	}
+    
+    h1 {
+    	font-size: 2.5em;
+    }
+
+    hr {
+    	width: 35%;
+    	margin-left: auto;
+    	margin-right: auto;
+    	border-width: 1px;
+    	box-shadow: rgba(255, 255, 255, 1) 0 2px 0;
+		border-top: 1px solid #e8e8e8;
+    }
+
+    p {
+    	margin: 0;
+    	font-size: 1em;
+    }
+
+    .salutation {
+    	color: #666;
+    }
+
+    .closed {
+        display: none;
+    }
+
+    .intro-summary {
+    	color: #999;
+        text-align: left;
+    	a {
+    		display: block;
+    		font-size: 0.8em;
+    	}
+    }
+}
+
+//
+// feedback form section
+//
+
+#feedback-form {
+	padding-top: emCalc(80px);
+    padding-bottom: emCalc(40px);
+	text-align: center;
+
+    #form-content {
+        @include grid-column(8, true, true);
+    }
+
+	h2 {
+    	font-size: 2.2em;
+    	font-weight: 500;
+    	margin-bottom: emCalc(15px);
+    }
+
+    #excited-slider {
+    	margin: 0 auto;
+    }
+
+    h3 {
+    	font-size: 1.5em;
+    	font-weight: 300;
+
+    	strong {
+    		color: #fbcb1b;
+    		font-weight: 600;
+    	}
+    	padding-top: emCalc(20px);
+    	padding-bottom: emCalc(20px);
+    	img {
+    		position: relative;
+    		top: -2px;
+    	}
+
+    }
+
+    textarea {
+    	@include box-shadow(inset 1px 1px 10px #e5e5e5);
+    	padding: 15px;
+    	border: 3px solid #e5e5e5;
+    	height: 95px;
+    	width: 570px;
+    	margin: 0 auto;
+    }
+
+    h4 {
+    	margin-top: emCalc(40px);
+    	padding-top: emCalc(30px);
+    	font-size: 2em;
+    	border-top: 1px solid #ddd;
+    	small {
+    		display: block;
+    		font-weight: 300;
+    		font-size: 0.5em;
+    		padding: 20px 0;
+    	}
+    }
+
+    form {
+    	text-align: left;
+    	
+        //columns for checkbox
+        .options {
+            @include grid-column(4);
+        }
+        label {
+    		padding-top: emCalc(30px);
+    		color: rgb(146,146,146);
+    		font-weight: 300;
+    		img {
+    			padding-left: emCalc(5px);
+    			padding-right: emCalc(5px);
+    		}
+    	}
+    }
+
+    .form-button {
+        @include grid-column(4, true, true);
+    }
+
+    .button {
+    	margin-top: emCalc(30px);
+    }
+}
+
+//
+// footer section
+//
+
+#feedback footer {
+	padding-top: emCalc(60px);
+    padding-bottom: emCalc(20px);
+	background-color: rgb(236,236,236);
+	text-align: center;
+	font-weight: 300;
+    
+    #invite-now {
+        @include grid-column(12);
+    }
+}

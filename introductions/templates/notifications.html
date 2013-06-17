@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load avatar_tags %}
+
+{% block content %}
+<header>
+    <div class="row">
+        <div class="avatar">
+            {% avatar user 200 %}
+        </div>
+        <div class="greetings">
+            <h1><span>{{ user.first_name }}'s Preferences</span></h1>
+        </div>
+    </div>
+</header>
+<div class="row">
+    <div class="nine columns centered panel">
+    <form method="POST" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="medium button radius" type="submit" value="Update" />
+    </div>
+    </form>
+    </div>
+</div>
+<div class="row">
+    <div class="small-6 columns">
+    <h4 class="subheader">Your Feedback Request Message</h4>
+    <p>Ten days after you make an intro, we'll invite the people involved to share feedback.</p>
+    <p>In addition to the message, we'll include a personalized, private link for each to give feedback and an invitation to start tracking their own intros.</p>
+    </div>
+    <div class="small-6 columns">
+        {% include "partials/_feedback_request_email_panel.html" %}
+    </div>
+</div>
+{% endblock %}

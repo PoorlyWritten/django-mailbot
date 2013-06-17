@@ -1,0 +1,102 @@
+//
+// nouislider
+// https://github.com/leongersen/noUiSlider
+//
+
+// main styles - pls do not change
+
+.noUiSlider,
+    .noUiSlider * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    display: block;
+    cursor: default;
+}
+
+.noUiSlider {
+    position: relative;
+}
+
+.noUiSlider a {
+    position: absolute;
+    z-index: 1;
+}
+
+.noUiSlider a:nth-child(2) {
+    background: inherit !important;
+}
+
+.noUiSlider.horizontal a {
+    height: 100%;
+    right: 0;
+}
+
+// small size slider
+
+.noUiSlider.horizontal-small {
+    width: 115px;
+    height: 13px;
+}
+
+.noUiSlider.horizontal-small,
+    .noUiSlider.horizontal-small.connect.lower a {
+    background: url('../images/slider_background_small.png');
+    background-size: 115px;
+}
+
+.noUiSlider.horizontal-small div {
+    height: 15px;
+    width: 7px;
+    background: url('../images/icon-slider.png');
+    background-size: 7px;
+    margin: -2px 0 0 -3px !important;
+}
+
+
+// medium size slider
+
+.noUiSlider.horizontal-medium {
+    width: 430px;
+    height: 48px;
+}
+
+.noUiSlider.horizontal-medium,
+    .noUiSlider.horizontal-medium.connect.lower a {
+    background: url('../images/slider_background.png');
+    background-size: 430px;
+}
+
+.noUiSlider.horizontal-medium div {
+    height: 48px;
+    width: 21px;
+    background: url('../images/icon-slider.png') no-repeat;
+    background-size: 21px;
+    margin: 3px 0px 0 -9px;
+    margin-top: 0px !important;
+}
+
+
+// big size slider
+
+.noUiSlider.horizontal-big {
+    width: 570px;
+    height: 60px;
+}
+
+.noUiSlider.horizontal-big,
+    .noUiSlider.horizontal-big.connect.lower a {
+    background: url('../images/slider-big.png');
+    background-size: 570px;
+}
+
+.noUiSlider.horizontal-big div {
+    height: 81px;
+    width: 31px;
+    background: url('../images/icon-slider-big.png');
+    margin: -9px 0 0 -15px !important;
+}
+

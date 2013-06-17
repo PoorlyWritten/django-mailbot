@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Welcome to Intros!{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
+{% endblock %}
+{% block content %}
+<header>
+    <div class="row">
+        <h1><span>Welcome to Intros!</span>Where you can simply track and improve your invitations</h1>
+    </div>
+</div>
+</header>
+<div class="row">
+    <div class="small-9 columns small-centered">
+    <br />
+        <form method=POST class="custom">
+        {% csrf_token %}
+        {{ form }}
+        <input type=submit name="Accept" class="button medium"/>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+//
+// header section
+//
+
+body#introduction header {
+    @include header(40px, 0px);
+    border-bottom: 1px solid rgb(235,235,235);
+    
+    // cards section
+    #cards {
+        @include grid-column(12);
+    }
+    h1 {
+    	font-size: 1.7em;
+    	span {
+			display: block;
+			font-size: 3.0em;
+			font-weight: 100;
+			line-height: .75em;
+    	}
+    }
+
+    .icon-double-arrow {
+        @include grid-column(1);
+        padding-top: emCalc(50px);
+        text-align: center;
+    }
+
+    .small-card {
+        @include grid-column(3);
+        @include card(false, false, 10px);
+    	border: 3px solid rgb(239,239,239);
+    	&:first-child {
+    		margin-left: 0.9375em;
+    	}
+    	.avatar {
+    		width: 53px;
+    		@extend .left;
+    	}
+    	.meta {
+    		margin-left: 64px;
+    		span {
+    			display: block;
+    			&.name {
+    				font-weight: 300;
+    			}
+				&.title {
+					font-size: 0.7em;
+					padding: 5px 0;
+					text-transform: uppercase;
+					color: rgb(146,146,146);
+				}
+				&.label {
+					font-size: 0.7em;
+					display: inline-block;
+				}
+    		}
+    		.feedback {
+    			margin-top: emCalc(15px);
+    			padding-top: emCalc(5px);
+    			border-top: 1px solid rgb(239,239,239);
+    			p {
+    				margin: 0;
+    				font-size: 0.8em;
+    			}
+    		}
+    	}
+    }
+}
+
+//
+// timeline section
+//
+
+#timeline {
+	padding-top: emCalc(40px);
+	padding-bottom: emCalc(80px);
+    @extend .stripey;
+	.items {
+        @include grid-column(12);
+
+		article {
+			position: relative;
+			h3 {
+				text-transform: uppercase;
+				font-weight: 300;
+				font-size: 1.1em;
+				text-align: center;
+				margin-bottom: 0;
+			}
+
+			.summary {
+                @include card(15px, 20px, 10px);
+    			border: 3px solid rgb(239,239,239);
+    			&:before {
+			        @include triangle(40px, 12px, up, rgb(239,239,239));
+			        content: '';
+			        left: 0;
+			        margin: 30px 0 0 469px;
+			        position: absolute;
+			        top: 0;
+    			}
+    			.triangle-top {
+    				@include triangle(36px, 9px, up, rgb(255,255,255));
+			        content: '';
+			        left: 0;
+			        margin: 34px 0 0 471px;
+			        position: absolute;
+			        top: 0;
+    			}
+    			.type {
+    				font-size: 0.8em;
+    				@extend .label, .secondary, .radius;
+    				text-transform: uppercase;
+    				display: block;
+    				font-weight: 300;
+    				color: #999;
+    				text-align: left;
+    				padding: 6px 12px;
+    				margin-bottom: emCalc(15px); 
+    			}
+    			.avatar {
+    				width: 64px;
+    				@extend .left;
+    				text-align: right;
+    			}
+    			.body {
+    				margin-left: 75px;
+    				.subject {
+    					font-size: 0.8em;
+    					margin-bottom: 0.2em;
+    				}
+    				.date {
+    					margin: 0 0 1em 0;
+    					text-transform: uppercase;
+						color: rgb(146,146,146);
+						font-size: 0.6em;
+						line-height: normal;
+						font-weight: normal;
+    				}
+    				.message {
+    					font-size: 0.8em;
+    					color: #999;
+    					margin-right: 350px;
+    				}
+    			}
+			}
+		}
+	}
+}
+
+

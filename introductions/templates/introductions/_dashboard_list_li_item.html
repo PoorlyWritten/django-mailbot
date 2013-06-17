@@ -1,0 +1,23 @@
+
+<h5>{{ object.introducee1 }} <img src="images/icon-arrow-orange.png" alt=""> {{ object.introducee2 }}<span>intro #{{ object.sequence }}</span></h5>
+<div class="row">
+    <div class="details">
+        <p class="subject">{{ object.subject|truncatewords:5 }} <span class="date">{{ object.created|timesince }} ago</span></p>
+            <p class="body">{{ object.clean_message|truncatewords:10 }}<a href="{{ object.get_user_url }}">more</a></p>
+    </div>
+    {% if object.feedback_requested %}
+        {% if object.feedback_commented %}
+        <div class="feedback">
+            <a href="{{ object.get_user_url }}#feedback" class="button radius right medium success">See Feedback</a>
+        </div>
+        {% else %}
+        <div class="feedback">
+            <a href="{{ object.get_user_url }}#feedback" class="button radius right medium secondary">Feedback Pending</a>
+        </div>
+        {% endif %}
+    {% else %}
+    <div class="feedback">
+        <a href="{{ object.get_user_url }}/notify" class="button radius right medium ">Ask for Feedback</a>
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,225 @@
+//
+// header section
+//
+
+body#dashboard header {
+    .greetings {
+        p.welcome {
+            font-size: 3em;
+            margin-bottom: 0;
+        }
+        p.count {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: $introsYellow;
+            margin: 0;
+            line-height: 0.8;
+        }
+    }
+}
+
+//
+// stats section
+//
+
+#stats {
+    background-color: rgb(244,244,244);
+    background-image: url('../images/dashboard-stats-bg.png');
+    padding-top: emCalc(30px);
+    padding-bottom: emCalc(50px);
+    border-bottom: 1px solid rgb(227,227,227);
+    
+    // stats box wrapper
+    .statswrapper {
+        @include grid-column(6);
+        h4 {
+            font-variant: small-caps;
+            margin: 0;
+            margin-bottom: 9px;
+            .icon-network {
+                @extend .right;
+                padding-right: emCalc(13px);
+            }
+        }
+    }
+}
+
+// graph and slider holder
+div.graph {
+    @include card(0px, false, false);
+    padding-bottom: 0;
+    @include box-shadow(0 0 3px rgba(0,0,0,0.2));
+    h3 {
+        margin: 0;
+        font-weight: 400;
+        font-size: emCalc(36px);
+        small {
+            font-size: 13px;
+            padding-top: emCalc(10px);
+            padding-bottom: emCalc(10px);
+            padding-left: 26px;
+            color: #a59570;
+            display: block;
+            background: url('../images/icon-network-orange-small.png') no-repeat 0 0;
+        }
+    }
+    .graphic {
+        margin: 9px 0;
+        clear: both;
+        height: 60px;
+        .slider-medium {
+            position: relative;
+            top:0px;
+        }
+    }
+    .button {
+        margin-top: 10px;
+    }
+    div.summary {
+        border-top: 1px solid #ddd;
+        border-right: 2px solid #fff;
+        border-left: 2px solid #fff;
+        margin-right: emCalc(-20px);
+        margin-left: emCalc(-20px);
+        background-color: rgb(245,245,245);
+        div {
+            @include grid-column(6);
+            p {
+                color: rgb(171,171,171);
+                font-size: 0.8em;
+            }
+        }
+    }
+}
+
+//leaderboards
+ul.leaderboard {
+    margin: 0;
+    @include card(0px, 0px, false);
+    // padding: 0;
+    @include box-shadow(0 0 3px rgba(0,0,0,0.2));
+    
+    li {
+        list-style: none;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+        font-size: 0.9em;
+        &:last-child {
+            border-bottom: none;
+        }
+        span {
+            color: $primary-color;
+            @extend .right;
+        }
+    }
+}
+
+//
+// my intros section
+//
+
+#my-intros {
+    padding-top: emCalc(50px);
+    padding-bottom: emCalc(50px);
+    border-top: 1px solid $white;
+    background-color: rgb(247,247,247);
+    background-image: url('../images/dashboard-recent-intros-bg.png');
+	div.title {
+        @include grid-column(4);
+        font-size: 1.125em;
+        line-height: 1.4;
+        h4 {
+            font-variant: small-caps;
+        }
+	}
+
+	div.sort-filters {
+        @include grid-column(8);
+		text-align: right;
+        small {
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+	}
+}
+
+// intros list
+.intros-list {
+    @include grid-column(12);
+    ul {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        li {
+            list-style: none;
+            @include card(0px, 12px, false);
+            @include box-shadow(0 0 3px rgba(0,0,0,0.2));
+            
+            h5 {
+                font-size: 0.9em;
+                border-bottom: 2px solid rgb(241,241,241);
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+                span {
+                    @extend .right;
+                    text-transform: uppercase;
+                }
+            }
+            
+            div.details {
+                font-size: 0.8em;
+                @include grid-column(8);
+                border-right: 4px solid rgb(246,246,246);
+            }
+            div.feedback {
+                font-size: 0.8em;
+                @include grid-column(4);
+                p {
+                    font-size: 0.8em;
+                    margin-bottom: 5px;
+                }
+                input {
+                    @extend .right;
+                    position: relative;
+                    top: 4px;
+
+                }
+            }
+            p.subject {
+                margin-bottom: 0;
+                color: #000;
+                span.date {
+                    color: rgb(211,211,211);
+                    text-transform: uppercase;
+                    padding-left: 5px;
+                }
+            }
+            p.body {
+                margin-bottom: 0;
+                color: rgb(140,140,140);
+            }
+
+        }
+    }
+}
+
+//
+// footer section
+//
+
+body#dashboard footer {
+    background-image: url('../images/dashboard-footer-bg.png'); 
+}
+
+.befriendly {
+    @include grid-column(3, true, true);
+    padding-top: emCalc(40px);
+    padding-bottom: emCalc(40px);
+    text-align: center;
+    h4 {
+        font-weight: normal;
+        text-transform: uppercase;
+        color: rgb(111,111,111);
+        font-size: 1.1em;
+    }
+}

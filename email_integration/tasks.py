@@ -21,6 +21,7 @@ POPSERVER = BOT_CONFIG.get('POP_SERVER', 'pop.gmail.com')
 @periodic_task(run_every=crontab(minute="*"))
 def fetch_pop_messages():
     # Build a pop3 connection
+    print "Getting a POP connection for %s at %s " % (POPSERVER, USER)
     Mailbox = poplib.POP3_SSL(POPSERVER, '995')
     Mailbox.user(USER)
     Mailbox.pass_(PASS)

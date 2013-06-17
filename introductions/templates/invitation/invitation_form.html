@@ -1,13 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}Invite your Friend!{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
+{% endblock %}
 {% block content %}
+<header>
+    <div class="row">
+        <h1><span>Invite other connectors!</span>And help more people give and receive great intros</h1>
+    </div>
+</div>
+</header>
 <div class="row">
     <div class="small-9 columns small-centered">
+    <br />
         <form method=POST class="custom">
         {% csrf_token %}
         {{ form }}
-        <input type=submit name="Invite!" />
+        <input type=submit value="Invite!" class="button medium"/>
         </form>
+    </div>
+</div>
+<div class="row">
+    <div class="small-7 columns small-centered">
+    <h4 class="subheader"> We'll send them this e-mail invitation</h4>
+    <div class=panel>
+    <p>{{ user.first_name }} has invited you to Intros.</p>
+    <p>Intros helps connectors track their introductions, get feedback on what happens and learn how to make even more powerful connections.</p>
+    <p>And it's all done through your e-mail.</p>
+    <p>To get started, follow the link at the bottom of this e-mail.</p>
+    <p>From the Intros Team</p>
+
+    </div>
     </div>
 </div>
 {% endblock %}

@@ -1,103 +1,120 @@
 {% extends "base.html" %}
 {% load avatar_tags %}
-<body id="dashboard" class="yui3-skin-sam">
 {% block title %}Intros ({{ object_list|length }}){% endblock %}
+{% block body_id %}dashboard{% endblock %}
 
 {% block content %}
-<div class="headerwrapper">
-<div class="header">
-    <div class="headerimage">
-{% avatar user 200 %}
-    </div>
-    <div class="headerinfo">
-        <p class="welcome">Welcome back {{ user.first_name|title }}!</p>
-        <p class="greeting">{{ object_list|length }} introduction{{ object_list|length|pluralize }} so far!</p>
+<header>
+    <div class="row">
+        <div class="avatar">
+            {% avatar user 200 %}
+        </div>
+
+    <div class="greetings">
+        <p class="welcome">{{ user.first_name|title }}, Welcome back!</p>
+        <p class="count">{{ object_list|length }} intro{{ object_list|length|pluralize }} tracked so far</p>
     </div>
 </div>
-</div>
-<div class="stats">
+</header>
+<div id="stats">
 <div class="row">
     <div class="statswrapper">
-        <h4>intro stats</h4>
+        <h4>how you've been making intros</h4>
         <div class="graph">
-            <div class="row">
-                <div class="small-9 columns">
-                    <h3>{{ object_list|length }} Intros</h3>
-                    <p>X intros this week</p>
-                </div>
-                <div class="small-3 columns">
-                    <div class="button small secondary">This week x</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="small-12 columns">
-                    <img src="http://placehold.it/500x200">
-                </div>
+            <!-- <a href="#" class="button small secondary right">This month</a> -->
+            <h3>{{ object_list|length }} <small>total intros tracked</small></h3>
+            <div class="graphic">
+                <canvas id="canvas" height="60" width="430"></canvas>
             </div>
             <div class="summary row">
-                <div class="small-6 columns">
-                    <h3>21</h3>
-                    <p>intros last week</p>
+                <div>
+                    <h3>{{ last_month_num }}</h3>
+                    <p>intros last month</p>
                 </div>
-                <div class="small-6 columns">
+                {% comment %}
+                <div>
                     <h3>9</h3>
-                    <p>average per week</p>
+                    <p>average per month</p>
                 </div>
+                {% endcomment %}
             </div>
         </div>
     </div>
     <div class="statswrapper">
-        <h4>feedback stats</h4>
+        <h4>what people say about your intros</h4>
     <div class="graph">
-        <img src="http://placehold.it/500x200">
-    </div>
+            <h3>Awesome <small>your average intro rating</small></h3>
+            
+            <div class="graphic">
+                <div id="feedback-stats" class="noUiSlider horizontal-medium"></div>
+            </div>
+            <div class="summary row">
+                <div>
+                    <h3>{{commented_percent}}%</h3>
+                    <p>intros with feedback</p>
+                </div>
+                {% comment %}
+                <div>
+                    <h3>20%</h3>
+                    <p>intros rated excellent</p>
+                </div>
+                {% endcomment %}
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="statswrapper">
-        <h5>Most Introduced</h5>
-        <div class="leaderboard">
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-        </div>
+        <h4><i class="icon-network"><img src="images/icon-network-grey.png" alt=""></i>who you introduce most</h4>
+        <ul class="leaderboard">
+            <li><span>19</span> Alex Lovell-Troy</li>
+            <li><span>19</span> Alex Lovell-Troy</li>
+            <li><span>19</span> Alex Lovell-Troy</li>
+        </ul>
     </div>
 
     <div class="statswrapper">
-        <h5>Biggest Fans</h5>
-        <div class="leaderboard">
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
-            <p class="row"><span class="name">Alex Lovell-Troy</span><span class="amount">19</span></p>
+        <h4><i class="icon-network"><img src="images/icon-network-grey-inverse.png" alt=""></i>who rates your intros highest</h4>
+        <div class="panel radius">
+        <h1>Coming soon!</h1>
         </div>
     </div>
 </div>
 </div>
-<div class="myintros">
+<!-- /stats -->
+<div id="my-intros">
     <div class="row">
-        <div class="title">Recent Intros</div>
-        <div class="listcontrols">
-                <span>sort by</span>
-                <span class="controlbutton">received feedback</span>
-                <span class="controlbutton">type of feedback</span>
-                <span class="controlbutton">top rated</span>
-                <span class="controlbutton">date</span>
+        <div class="title"><h4>recent intros</h4></div>
+        <div class="sort-filters">
+                <small><b>sort by</b></small>
+                {% comment %}
+                <a href="#" class="button small secondary active">received feedback</a>
+                <a href="#" class="button small secondary">type of feedback</a>
+                <a href="#" class="button small secondary">top rated</a>
+                {% endcomment %}
+                <a href="#" class="button small secondary active">date</a>
+                <small>more coming...</small>
         </div>
     </div>
-    <div class="introslist">
+    <div class="row">
+    <div class="intros-list">
+        <ul>
     {% for object in object_list %}
-    {% include "introductions/_dashboard_list_item.html" %}
+    <li>
+    {% include "introductions/_dashboard_list_li_item.html" %}
+    </li>
     {% endfor %}
+        </ul>
+    </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="befriendly">
-        <h4>Love Intros?</h4>
-        <div class="invitefriends">Invite your Friends!</div>
+<footer>
+    <div class="row">
+        <div class="befriendly">
+            <h4>Love Intros?</h4>
+            <a href="#" class="button radius">Invite your Friends!</a>
+        </div>
     </div>
-</div>
-
+</footer>
 {% endblock %}

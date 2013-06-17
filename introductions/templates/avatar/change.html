@@ -1,20 +1,26 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Change your picture{% endblock %}
 {% load avatar_tags %}
 
 {% block content %}
-<div class="row">    
-    <div class="twelve columns">
-        <h1>What do you look like?</h1>
-        <div class="row">
-            <div class="tc five columns centered">
-                {% avatar user 200 %}
-            </div>
+<header>
+    <div class="row">
+        <div class="avatar">
+            {% avatar user 200 %}
         </div>
 
+    <div class="greetings">
+        <h1>Hi {{ user.first_name|title }}!</h1>
+        <h2 class="subheader">What do you look like?</h2>
+    </div>
+</div>
+</header>
+<div class="row">
+    <div class="twelve columns">
     {% if not avatars %}
         <p>You do not yet have an avatar.  Please upload one now.</p>
     {% else %}
-        <form method="POST" action="">
+        <form method="POST" action="" class=custom>
             {% csrf_token %}
             {{ primary_avatar_form }}
             <input class="medium button radius" type="submit" value="Choose new Default" />

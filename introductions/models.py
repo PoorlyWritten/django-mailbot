@@ -1,12 +1,13 @@
 import logging
 logger = logging.getLogger(__name__)
+import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db import models, IntegrityError
+from django.core.urlresolvers import reverse
+from django.db import models, IntegrityError, transaction
 from django_extensions.db.fields import UUIDField
 from email_integration.models import RawEmail, EmailAddress, TemplatedEmailMessage
 from email_integration.send_mails import request_feedback_email
-import datetime
 import os
 import re
 
@@ -59,6 +60,30 @@ class FollowUp(models.Model):
     requested = models.DateTimeField(null=True, blank=True)
     added = models.DateTimeField(auto_now=True)
     rating = models.PositiveSmallIntegerField(default=75)
+    recruiting = models.BooleanField(
+            default=False
+            )
+    partnerships = models.BooleanField(
+            default=False
+            )
+    sales = models.BooleanField(
+            default=False
+            )
+    networking = models.BooleanField(
+            default=False
+            )
+    fundrasing = models.BooleanField(
+            default=False
+            )
+    mentorship = models.BooleanField(
+            default=False
+            )
+    other = models.BooleanField(
+            default=False
+            )
+    toosoon = models.BooleanField(
+            default=False
+            )
     objects = FollowUpManager()
 
     class Meta:
@@ -85,6 +110,7 @@ class FollowUp(models.Model):
 
 
 class IntroductionManager(models.Manager):
+    @transaction.commit_on_success()
     def create_introduction(self, raw_email):
         from_email = raw_email.isolated_from_addr
         connector = None
@@ -115,13 +141,19 @@ class IntroductionManager(models.Manager):
                 if not introducee2:
                     introducee2 = each
                     continue
+        last_sequence_dict = self.filter(connector=connector).aggregate(models.Max('sequence'))
+        if last_sequence_dict['sequence__max']:
+            sequence = last_sequence_dict['sequence__max'] + 1
+        else:
+            sequence = 1
         intro = Introduction(
             connector = connector,
             email_message = raw_email,
             subject = raw_email.subject,
             message = raw_email.payload,
             introducee1 = introducee1,
-            introducee2 = introducee2
+            introducee2 = introducee2,
+            sequence = sequence
         )
         intro.save()
         logger.debug("Just created an introduction.  It's pk is : %s" % intro.pk)
@@ -134,6 +166,9 @@ class IntroductionManager(models.Manager):
                 logger.debug("Couldn't send mail announcing an intro made by %s because: %s" % ( connector, error))
         return intro
 
+    def rated(self):
+        pkset = set([x.introduction_id for x in FollowUp.objects.commented()])
+        return super(IntroductionManager, self).filter(pk__in=pkset)
 
 class Introduction(models.Model):
     id = UUIDField(primary_key=True, auto=True, version=4)
@@ -144,7 +179,27 @@ class Introduction(models.Model):
     message = models.TextField()
     email_message = models.ForeignKey('email_integration.RawEmail', null=True, blank=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
+    sequence = models.IntegerField(default=None, null=True)
     objects = IntroductionManager()
+
+    def get_absolute_url(self):
+        return reverse('introduction_detail', args=[str(self.pk)])
+
+    def get_user_url(self):
+        return reverse('introduction_user_detail', args=[str(self.sequence)])
+
+
+    @property
+    def feedback_requested(self):
+        if len(self.followup_set.requested()) > 0:
+            return True
+        return False
+
+    @property
+    def feedback_commented(self):
+        if len(self.followup_set.commented()) > 0:
+            return True
+        return False
 
     def __unicode__(self):
         return u'%s introduced %s to %s' % (self.connector, self.introducee1, self.introducee2)
@@ -189,11 +244,25 @@ class IntroductionProfile(models.Model):
     position  = models.CharField(max_length=256, blank=True, null=True, default=None)
     company  = models.CharField(max_length=256, blank=True, null=True, default=None)
 
+
 class IntroductionPreferences(models.Model):
     user         = models.OneToOneField(User)
-    send_gotcha_notifications = models.BooleanField(default=True)
-    auto_send_feedback_requests = models.BooleanField(default=False)
-    send_monthly_summary = models.BooleanField(default=True)
+    send_gotcha_notifications = models.BooleanField(
+            default=True,
+            verbose_name="Send me a confirmation email when I bcc my@intros.to"
+            )
+    send_feedback_notifications = models.BooleanField(
+            default=True,
+            verbose_name="Notify me when someone leaves me feedback"
+            )
+    auto_send_feedback_requests = models.BooleanField(
+            default=False,
+            verbose_name="Automatically request feedback from people I've introduced"
+            )
+    send_monthly_summary = models.BooleanField(
+            default=True,
+            verbose_name="Send me a monthly summary of my intros and feedback"
+            )
 
 
 def parse_one_mail(raw_message_id):
@@ -246,6 +315,7 @@ def create_introduction_profiles(sender, **kwargs):
     user = kwargs['instance']
     IntroductionProfile.objects.get_or_create(user=user)
     IntroductionPreferences.objects.get_or_create(user=user)
+
 
 post_save.connect(create_introduction_profiles, sender=User)
 #post_save.connect(test_signal_handler)

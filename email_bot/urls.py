@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     (r'^dev/introductions$', OLTemplateView.as_view(template_name="introduction.html")),
     (r'^dev/main$', OLTemplateView.as_view(template_name="dashboard.html")),
     (r'^login/?$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
-    (r'^logout/?$', logout_then_login),
+    url (r'^logout/?$', logout_then_login, name="logout"),
+    (r'^account/', include('django.contrib.auth.urls')),
 )
 

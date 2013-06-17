@@ -1,3 +1,23 @@
+function eventer(event) {
+            console.log("Got the signal (" + event + ") and this is " + this);
+        };
+function timesince(when) {
+    var hour = 1000*60*60;
+    var day = hour*24;
+    var week = day*7;
+    var month = day*30;
+    var year = day*365;
+    var today = new Date();
+    var in_milliseconds = Math.ceil(today.getTime() - when.getTime());
+    if (in_milliseconds < day*10){
+        return ~~(in_milliseconds/day) + " days";
+    }
+    if (in_milliseconds < month * 3){
+        return ~~(in_milliseconds/week) + " weeks";
+    }
+    return ~~(in_milliseconds/month) + " months";
+};
+
 ;(function ($, window, undefined) {
   'use strict';
 
@@ -38,10 +58,53 @@
 })(jQuery, this);
 
 $(document).ready(function() {
-    window.Introducee = Backbone.Model.extend({});
+    window.Introducee = Backbone.Model.extend({
+        sync: function () { return true; },
+
+    });
     window.IntroduceeCollection = Backbone.Collection.extend({
         model: Introducee,
+        comparator: function(ab) {
+            return -ab.get('length');
+        },
     });
+    window.IntroduceeView = Backbone.View.extend({
+        // model: Needs to be an instance of the Introduction
+        template: _.template("<li><span><%= length %></span> <%= email %></li>"),
+        initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+        },
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        }
+    });
+
+    window.IntroduceeCollectionView = Backbone.View.extend({
+        // collection: Needs to be an instance of the IntroductionCollection
+        childViews: [],
+        initialize: function() {
+            this.listenTo(this.collection, 'sort', this.render);
+            //this.listenTo(this.collection, 'all', this.eventer);
+        },
+        addOne: function(introducee) {
+            var myview = new IntroduceeView({model: introducee});
+            $(this.$el).append(myview.render().el);
+
+        },
+        render: function() {
+
+            var that = this;
+            $(this.el).html('');
+            this.collection.each(function(element, index, list){
+                if (index < 5){
+                    that.addOne(element);
+                }
+            });
+        }
+
+    });
+
     window.Introduction = Backbone.Model.extend({
         urlRoot: INTRODUCTION_API
     });
@@ -50,6 +113,7 @@ $(document).ready(function() {
         model: Introduction,
         initialize: function() {
             this._sort_order = 'desc';
+            this.listenTo(this, 'sync', this.build_introducee_collection);
         },
         comparator: function(element) {
             var date = new Date(element.get('created'));
@@ -80,6 +144,35 @@ $(document).ready(function() {
                 }
             );
             return dict
+        },
+        build_introducee_collection: function() {
+            var that = this;
+            app.introducees.reset();
+            _.each(
+                this.emails(),
+                function(email_addr, index, list){
+                    var length = that.filter(function(element){
+                        return (element.attributes.introducee1 == email_addr || element.attributes.introducee2 == email_addr)}).length;
+                    app.introducees.create({email: email_addr, length: length, url: null});
+                }
+            );
+        },
+        graphdata: function(period) {
+            if (period == "week") {
+                var dates =  {};
+                this.each( function(element, index, list) {
+                    var date = new Date(element.get("created"));
+                    var day = date.getDate() + 1;
+                    var month = date.getMonth() + 1;
+                    var datestring = month + "/" + day
+                    if (datestring in dates){
+                        dates[datestring] += 1
+                    } else {
+                        dates[datestring] = 1
+                    }
+                });
+                return dates;
+            }
         }
     });
 
@@ -100,7 +193,7 @@ $(document).ready(function() {
         childViews: [],
         initialize: function() {
             this.listenTo(this.collection, 'sort', this.render);
-            //this.listenTo(this.collection, 'all', this.eventer);
+            //this.listenTo(this.collection, 'all', eventer);
 
             this.collection.fetch({
                 success: function(collection, response, options){
@@ -116,9 +209,6 @@ $(document).ready(function() {
             $(this.$el).append(myview.render().el);
 
         },
-        eventer: function(event) {
-            console.log("Got the signal (" + event + ") and this is " + this);
-        },
         render: function() {
             var that = this;
             $(this.el).html('');
@@ -129,9 +219,45 @@ $(document).ready(function() {
 
     });
 
+    var IntrosRouter = Backbone.Router.extend({
+
+      routes: {
+        "dashboard":            "dashboard",    // #dashboard
+        "*action": "defaultRoute"
+      },
+
+      dashboard: function() {
+            console.log(" In the dashboard route");
+            app.introductions = new IntroductionCollection();
+            app.introducees = new IntroduceeCollection();
+            app.introsview = new IntroductionCollectionView({collection: app.introductions, el: $(".introslist")});
+            app.introduceesview = new IntroduceeCollectionView({collection: app.introducees, el: $("ul.leaderboard")});
+            app.introductions.on('sync', function(){
+                lineChartData.labels = new Array();
+                lineChartData.datasets[0].data = new Array();
+                for (x in app.introductions.graphdata("week")){
+                    lineChartData.labels.push(x);
+                    lineChartData.datasets[0].data.push(app.introductions.graphdata("week")[x]);
+                }
+                lineChartData.labels.reverse();
+                lineChartData.datasets[0].data.reverse();
+                var myLine = new Chart(
+                    document.getElementById("canvas") .getContext("2d")
+                    ).Line(lineChartData, lineChartDefaults);
+
+            });
+      },
+      defaultRoute: function (action) {
+        console.log(" In the default route");
+        console.log(" action = " + action);
+      },
+
+
+    });
+
     window.app = window.app || {};
-    app.introductions = new IntroductionCollection();
-    app.introducees = new IntroduceeCollection({ introductions: app.introductions });
-    app.introsview = new IntroductionCollectionView({collection: app.introductions, el: $(".introslist")});
+    window.router = new IntrosRouter();
+    Backbone.history.start({ pushState: true });
 
 });
+

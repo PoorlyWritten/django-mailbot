@@ -11,14 +11,23 @@ class RangeInput(forms.widgets.Input):
 class FollowUpForm(forms.ModelForm):
     class Meta:
         model = FollowUp
-        fields = ('name', 'email', 'comment', 'rating')
+        fields = ('comment',
+                  'rating',
+                  'recruiting',
+                  'partnerships',
+                  'sales',
+                  'networking',
+                  'fundrasing',
+                  'mentorship',
+                  'other',
+                  'toosoon')
         widgets = {
-            'rating': RangeInput(),
+            'rating': forms.widgets.HiddenInput(),
             }
 
 class RequestFollowUpForm(forms.Form):
-    introducee1_message = forms.CharField (widget=forms.widgets.Textarea(attrs={'rows':8,'cols':72}) )
-    introducee2_message = forms.CharField (widget=forms.widgets.Textarea(attrs={'rows':8,'cols':72}) )
+    introducee1_message = forms.CharField (widget=forms.widgets.HiddenInput())
+    introducee2_message = forms.CharField (widget=forms.widgets.HiddenInput())
     include_introducee1 = forms.BooleanField(initial=True)
     include_introducee2 = forms.BooleanField(initial=True)
 
@@ -36,10 +45,6 @@ class IntroductionProfileForm(forms.ModelForm):
                 'first_name',
                 'last_name',
                 'location',
-                'headline',
-                'position',
-                'company',
-                'description',
         ]
 
 class IntroductionPreferenceForm(forms.ModelForm):

@@ -1,5 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
+import datetime
+from django.utils.timezone import utc
 from django.views.generic import ListView, UpdateView, DetailView, FormView
 from django.views.generic.detail import SingleObjectMixin
 from .models import Introduction, FollowUp, IntroductionProfile, IntroductionPreferences
@@ -16,10 +18,32 @@ class IntroductionListView(OLContextMixin, ListView):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
         return Introduction.objects.filter(connector = self.request.user).order_by('-created')
 
+    def get_context_data(self, **kwargs):
+        context = super(IntroductionListView, self).get_context_data(**kwargs)
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        month_ago = now - datetime.timedelta(days=30)
+        context['last_month_num'] = len([x.created for x in self.get_queryset().filter(created__range=(month_ago, now))])
+        commented = Introduction.objects.rated().filter(connector = self.request.user)
+        context['commented'] = commented
+        if len(self.get_queryset()) > 0:
+            context['commented_percent'] = int(float(len(commented))/float(len(self.get_queryset())) * 100)
+        else:
+            context['commented_percent'] = 0
+        print context['commented_percent']
+        return context
+
+
+class IntroductionUserDetailView(OLContextMixin, DetailView):
+    model = Introduction
+    slug_field='sequence'
+
+    def get_queryset(self):
+        logger.debug("Returning filtered introductions made by %s" % self.request.user)
+        return Introduction.objects.filter(connector = self.request.user)
 
 class IntroductionDetailView(OLContextMixin, DetailView):
     model = Introduction
-    slug_field='id'
+    slug_field='pk'
 
     def get_queryset(self):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
@@ -30,7 +54,7 @@ class IntroductionNotificationRequestView(OLContextMixin, DetailView):
     template_name = 'introduction/notify.html'
     heading = "Email Requests Sent!"
     model = Introduction
-    slug_field='id'
+    slug_field='sequence'
 
     def get_queryset(self):
         logger.debug("Returning filtered introductions made by %s" % self.request.user)
@@ -54,7 +78,11 @@ class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
     heading = "Email Requests Sent!"
     model = Introduction
     form_class = RequestFollowUpForm
-    slug_field='id'
+    slug_field='sequence'
+
+    def get_queryset(self):
+        logger.debug("Returning filtered introductions made by %s" % self.request.user)
+        return Introduction.objects.filter(connector = self.request.user)
 
     def get_initial(self):
         try:
@@ -82,7 +110,7 @@ class RequestFeedbackFormView(OLContextMixin, SingleObjectMixin, FormView):
             assert self.object
         except AttributeError:
             self.object = self.get_object()
-        return "/introductions/%s#FeedbackRequested" % self.object.pk
+        return self.object.get_user_url()
 
     def get_context_data(self, **kwargs):
         return super(RequestFeedbackFormView, self).get_context_data(object=self.object, **kwargs)
@@ -120,7 +148,7 @@ class FollowUpUpdate(OLContextMixin, UpdateView):
     model = FollowUp
     form_class = FollowUpForm
     slug_field = 'custom_url'
-    success_url = "/introductions"
+    success_url = "/"
     heading = "How did it go?"
 
     def get_object(self,queryset=None):

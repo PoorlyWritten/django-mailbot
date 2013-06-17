@@ -1,126 +1,50 @@
-<article class="introduction alternative">
-  <div class="row">
-    <div class="nine columns">
-      <div class="row person-container">
-        <div class="five columns">
-          <div class="person">
-            <span class="image"><img src="/images/icon_person.png" alt=""></span>
-            <h1 class="name">{{ object.introducee1 }}</h1>
-          </div>
-        </div>
-        <div class="one columns person-seperator"> </div>
-        <div class="five columns end">
-          <div class="person">
-            <span class="image"><img src="/images/icon_person.png" alt=""></span>
-            <h1 class="name">{{ object.introducee2 }}</h1>
-          </div>
-        </div>
-      </div>
+    {% if not object.followup_set.requested %}
+    <div class="panel callout radius">
+        <p>Requesting feedback from {{ object.introducee1 }} and {{ object.introducee2 }} will help you understand what really happens because of your intros - and learn how and for whom to make even better intros.</p>
+        <p>You can customise the email on the next page.</p>
+        <a href="#" class="button medium">Ask for Feedback</a>
     </div>
-  </div>
-  <div class="row">
-      {% if object.followup_set.requested|length == 0 %}
-      <div class="ten columns">
-        <div class="outcomes">
-
-            <h4 class="title">What's happened because of your introduction?</h4>
-            <p>The people you’ve introduced can help you make better introductions. Ask them how it went.</p>
-            <a class="medium button radius" href="/introductions/{{ object.pk }}/notify">Request Feedback</a>
-        </div>
-      </div>
-      {% endif %}
-  </div>
-</article>
-<div class="section new-section diagonal-dash introductions">  
-  <div class="row">
-    <div class="twelve columns">
-    <div class="row introduction-date">
-      <div class="twelve columns">
-        <h3 class="large date">{{ object.created|timesince }} ago</h3>
-      </div>
-    </div>
-    <article class="introduction">
-
-          <div class="top">
-            <span class="info">Introduction created</span>
-          </div>
-          <div class="row">
-            <div class="nine columns">
-              <div class="row">
-                <div class="twelve columns">
-                  <div class="message">
-                        <span class="profile-image"><img src="/images/icon_person.png" alt=""></span>
-                        <h2 class="subject">{{ object.subject }}</h2>
-                        <div class="date">{{ object.created }}</div>
-                        <div class="message-content">
-                          {{ object.message|linebreaks }}
-                        </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% comment %}
-            <div class="three columns">
-              <div class="aside">
-                  <h4 class="title">My Notes</h4>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt.</p>
-              </div>
-            </div>
-            {% endcomment %}
-          </div>
-
-    </article>
-
-{% if object.followup_set.requested %}
-<div class="row"><div class="six columns centered"><h2 id="FeedbackRequested">Feedback Requested</h2></div></div>
-{% endif %}
-{% for feedback in object.followup_set.requested %}
-<div class="row introduction-date">
-  <div class="twelve columns">
-    <h3 class="large date">{{ feedback.requested|timesince }} ago</h3>
-  </div>
-</div>
-<article class="introduction">
-      <div class="top">
-        <span class="info">Feedback requested from {{ feedback.email }}</span>
-      </div>
-</article>
-{% endfor %}
-
-{% for feedback in object.followup_set.commented %}
-<div class="row introduction-date">
-  <div class="twelve columns">
-    <h3 class="large date">{{ feedback.added|timesince }} ago</h3>
-  </div>
-</div>
-<article class="introduction">
-
-      <div class="top">
-        <span class="info">Feedback received from {{ feedback.email }}</span>
-      </div>
-
-      <div class="row">
-        <div class="nine columns">
-          
-
-          <div class="row">
-            <div class="twelve columns">
-              
+    {% endif %}
+    {% if object.followup_set.commented %}
+    <a id="feedback"><h1>Your Feedback!</h1></a>
+    {% endif %}
+    {% for followup in  object.followup_set.commented %}
+    <article>
+        <h3>{{ followup.added|timesince }} ago </h3>
+          <section class="summary">
+            <span class="triangle-top"></span>
+            <h4 class="type">Feedback added by {{ followup.email }}</h4>
+            <p class="date">{{ followup.added }}</p>
+            <div class="avatar"><img src="/images/icon-person.png" alt=""></div>
+            <div class="body">
               <div class="message">
- 
-                    <span class="profile-image"><img src="/images/icon_person.png" alt=""></span>
-
-                    <div class="date">{{ feedback.added }}</div>
-                    <div class="message-content">
-                    {{ feedback.comment|linebreaks }}
-                    </div>
-
-
+                  {{followup.comment|linebreaks}}
+              </div>
+          </section>
+    </article>
+    {% endfor %}
+    {% for followup in  object.followup_set.requested %}
+    <article>
+        <h3>{{ followup.requested|timesince }} ago </h3>
+          <section class="summary">
+            <span class="triangle-top"></span>
+            <h4 class="type">Feedback requested from {{ followup.email }}</h4>
+            <p class="date">{{ followup.requested }}</p>
+          </section>
+    </article>
+    {% endfor %}
+    <article>
+          <h3>{{ object.created|timesince }} ago</h3>
+          <section class="summary">
+            <span class="triangle-top"></span>
+            <h4 class="type">Intro made</h4>
+            <div class="avatar"><img src="/images/icon-person.png" alt=""></div>
+            <div class="body">
+                <h5 class="subject">{{ object.subject }}</h5>
+              <p class="date">{{ object.created }}</p>
+              <div class="message">
+                  {{object.message|linebreaks}}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-</article>
-{% endfor %}
+          </section>
+    </article>

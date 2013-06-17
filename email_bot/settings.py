@@ -134,18 +134,18 @@ INSTALLED_APPS = (
     'tastypie',
     'backbone_tastypie',
     'widget_tweaks',
-    'avatar',
     'registration',
+    'introductions',
     'invitation',
     'email_integration',
     'oneleap_mailer',
-    'introductions',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'djangoratings',
     'storages',
+    'avatar',
     # South must be last
     'south'
 )

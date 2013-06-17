@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Invite your Friend!{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
+{% endblock %}
 {% block content %}
+<header>
+    <div class="row">
+        <h1><span>Thanks!</span>Your invitation has been sent!</h1>
+    </div>
+</div>
+</header>
 <div class="row">
+    <br />
     <div class="small-9 columns small-centered">
-        <h1>Thanks!</h1>
+        <a href="{% url 'invitation_invite' %}"<h1>Invite More?</h1></a>
     </div>
 </div>
 {% endblock %}

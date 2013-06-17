@@ -2,14 +2,16 @@
 {% load avatar_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="three columns ">
-        {% avatar user 200 %}
+<header>
+    <div class="row">
+        <div class="avatar">
+            {% avatar user 200 %}
+        </div>
+        <div class="greetings">
+            <h1><span>{{ user.first_name }}'s Profile</span></h1>
+        </div>
     </div>
-    <div class="nine columns">
-<h1>{{ user.get_full_name }} - Settings</h1>
-    </div>
-</div>
+</header>
 <div class="row">
     <div class="nine columns centered panel">
     <form method="POST" action="">

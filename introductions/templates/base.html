@@ -47,41 +47,13 @@
 {% endblock %}
 
 </head>
-<body>
+<body id={% block body_id %}main{% endblock %}>
 {% block topbar %}
 {% include "partials/top_bar.html" %}
-{% endblock %}
-{% block header %}
-{% if heading %}
-<div class="row">
-    <div class="twelve columns">
-        <h2>{{ heading }}</h2>
-    </div>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block content %}{% endblock %}
 
-  
-  <!-- Footer -->
-  
-  <footer class="row">
-    <div class="twelve columns">
-      <hr />
-      <div class="row">
-        <div class="six columns">
-          <p>&copy; Copyright Intros 2013</p>
-        </div>
-        <div class="six columns">
-          <ul class="link-list right">
-              {% comment %}<li><a href="/pricing">Pricing</a></li>{% endcomment %}
-            <li><a href="mailto:contacts@intros.to">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
-    </div> 
-  </footer>
 
 	<!-- Included JS Files (Uncompressed) -->
     <script src="{% static "javascripts/foundation/jquery.js" %}"></script>
@@ -102,11 +74,13 @@
     <script src="{% static "javascripts/foundation/jquery.foundation.tabs.js" %}"></script>
     <script src="{% static "javascripts/foundation/jquery.foundation.tooltips.js" %}"></script>
     <script src="{% static "javascripts/foundation/jquery.foundation.topbar.js" %}"></script>
-    <script src="{% static "javascripts/foundation/jquery.foundation.utils.js" %}"></script>
     <script src="{% static "javascripts/foundation/jquery.placeholder.js" %}"></script>
+    <script src="/javascripts/vendor/jquery.nouislider.js"></script>
+    <script src="/javascripts/vendor/Chart.js"></script>
     <script src="{% static "js/underscore.js" %}"></script>
     <script src="{% static "js/backbone.js" %}"></script>
     <script src="{% static "js/backbone-tastypie.js" %}"></script>
+    <script src="/javascripts/app/graphs.js"></script>
 
     <script>
       INTRODUCTION_API = "{% url "api_dispatch_list" resource_name="introduction" %}";

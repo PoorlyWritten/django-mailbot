@@ -1,74 +1,33 @@
 {% extends 'base.html' %}
-{% block header %}
-<div class="heading-section">
-  <div class="row">
-    <div class="twelve columns">
-      <h1 class="primary-heading offset-top">
-        <span class="large">Request Feedback</span>
-      </h1>
-    </div>
-  </div>
-</div>
+{% block title %}Ask for Feedback{% endblock %}
+{% block topbar %}
+{% include "partials/top_bar_simple.html" %}
 {% endblock %}
 
 {% block content %}
-
-<div class="row">    
-    <div class="twelve columns">
-<article class="introduction alternative">
-  <div class="row">
-    <div class="nine columns">
-      <div class="row person-container">
-        <div class="five columns">
-          <div class="person">
-            <span class="image"><img src="/images/icon_person.png" alt=""></span>
-            <h1 class="name">{{ object.introducee1 }}</h1>
-          </div>
-        </div>
-        <div class="one columns person-seperator"> </div>
-        <div class="five columns end">
-          <div class="person">
-            <span class="image"><img src="/images/icon_person.png" alt=""></span>
-            <h1 class="name">{{ object.introducee2 }}</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-      <div class="twelve columns">
-        <div class="outcomes">
-
-            <h4 class="title">Ask them how it went!</h4>
-            <p>The people you’ve introduced can help you make better introductions. We'll send them an e-mail with a link they can use to provide you with feedback.</p>
-            <p>This feedback is totally private between the two of you and you can choose who to ask and customize the message.</p>
-            <a href="#" class="button medium radius" data-reveal-id="introduceeForm1">Continue</a>
-        </div>
-      </div>
-  </div>
-</article>
+<header>
+    <div class="row">
+        <h1><span>Make better intros</span>Invite them to help you make better intros</h1>
     </div>
 </div>
-{% endblock %}
-
-{% block modals %}
+</header>
+<div class="row">
+    <div class="small-9 columns small-centered">
 <form method=POST>
 {% csrf_token %}
-<div id="introduceeForm1" class="reveal-modal large">
-    <h3>Request feedback from {{ object.introducee1 }}</h3>
-    {{ form.introducee1_message }}
-    <p>We'll include the feedback link below your message.</p>
-    {{ form.include_introducee1 }} Uncheck this box if you'd rather skip to requesting feedback from  {{ object.introducee2 }}
-    <p><a href="#" class="button medium radius" data-reveal-id="introduceeForm2">Next</a></p>
-    <a class="close-reveal-modal">&#215;</a>
-</div>
-<div id="introduceeForm2" class="reveal-modal large">
-    <h3>Request feedback from {{ object.introducee2 }}</h3>
+            <div class="small-6 columns">
+        <h4 class="subheader">Ask how it went!</h4>
+    <p>We'll send this message to:</p>
+    <p>{{ form.include_introducee1 }} {{ object.introducee1 }}<br />{{ form.include_introducee2 }} {{ object.introducee2 }}</p>
     {{ form.introducee2_message }}
-    <p>We'll include the feedback link below your message.</p>
-    {{ form.include_introducee2 }} Uncheck this box if you'd rather not request feedback from {{ object.introducee2 }}
+    {{ form.introducee1_message }}
+    <p> We'll include a personalized, private link for each to give feedback and an invitation to start tracking their own intros.</p>
     <p><input class="button medium radius" value="Request Feedback" type="submit"/></p>
-    <a class="close-reveal-modal">&#215;</a>
+            </div>
+            <div class="small-6 columns">
+                {% include "partials/_feedback_request_email_panel.html" %}
+            </div>
 </div>
 </form>
+</div>
 {% endblock %}

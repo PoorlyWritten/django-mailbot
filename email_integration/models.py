@@ -166,6 +166,9 @@ class EmailAddressManager(models.Manager):
         logger.debug("Creating email with attrs: %s" % attrs)
         return EmailAddress(**attrs)
 
+    def claimed(self):
+        return super(EmailAddressManager, self).all().exclude(user_profile__user = None)
+
 
 class EmailAddress(models.Model):
     id = UUIDField(primary_key=True, auto=True, version=4)

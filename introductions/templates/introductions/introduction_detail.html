@@ -2,24 +2,75 @@
 
 {% block title %}Intros.to - {{ object.subject }}{% endblock %}
 
-{% block header %}
-<div class="heading-section">
-  
-  <div class="row">
-    <div class="twelve columns">
-      <h1 class="primary-heading offset-top">
-          {{ object.subject|truncatewords:5 }}
-        <span class="large">Introduction</span>
-      </h1>
-    </div>
-  </div>
-</div>
-{% endblock %}
-{% block content %}
+{% block body_id %}introduction{% endblock %}
 
-<div class="row">    
-    <div class="twelve columns">
+{% block content %}
+<header>
+  <div class="row">
+    <div id="cards">  
+        <p><a href="/dashboard"> < Back</a></p>
+
+        <h1>{{object.subject}}<span>Timeline for Intro #{{ object.sequence }}</span></h1>
+
+      <div class="row">
+        <div class="small-card">
+          <div class="avatar"><img src="/images/icon-person.png"></div>
+          <div class="meta">
+              <span class="name">{{ object.introducee1}}</span>
+              <!-- <span class="title">CO Founder & Director</span> -->
+              <!-- <span class="label secondary">18 intros</span> -->
+            <div class="feedback">
+                <p>Feedback Rating</p>
+                <p><div class="noUiSlider slider-small horizontal-small"></div></p>
+            </div>
+          </div>
+        </div>
+        <!-- /small-card -->
+
+        <div class="icon-double-arrow">
+          <img src="/images/icon-double-arrow.png" alt="">
+        </div>
+
+        <div class="small-card">
+          <div class="avatar"><img src="/images/icon-person.png"></div>
+          <div class="meta">
+              <span class="name">{{object.introducee2}}</span>
+              <!-- <span class="title">CO Founder & Director</span> -->
+              <!-- <span class="label secondary">18 intros</span> -->
+            <div class="feedback">
+                <p>Feedback Rating</p>
+                <p><div class="noUiSlider slider-small horizontal-small"></div></p>
+            </div>
+          </div>
+        </div>
+        <!-- /small-card -->
+      </div>
+    </div> 
+  </div>
+</header>
+
+<div id="timeline">
+    <div class="row">    
+        <div class="items">
     {% include 'introductions/_introduction_item.html' %}
+        </div>
     </div>
+</div>
+<div class=debug>
+    <ul>Feedback</ul>
+    {% for followup in object.followup_set.all %}
+    <li>{{ followup.created }} - {{ followup.requested }} - {{ followup.accepted }}</li>
+    {% endfor %}
+    </ul>
+    <ul>Requested</ul>
+    {% for followup in object.followup_set.requested %}
+    <li>{{ followup.created }} - {{ followup.requested }} - {{ followup.accepted }}</li>
+    {% endfor %}
+    </ul>
+    <ul>Commented</ul>
+    {% for followup in object.followup_set.commented %}
+    <li>{{ followup.created }} - {{ followup.requested }} - {{ followup.accepted }}</li>
+    {% endfor %}
+</ul>
 </div>
   {% endblock %}

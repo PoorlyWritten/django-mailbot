@@ -1,22 +1,11 @@
 from tastypie.resources import ModelResource
-from .models import RawEmail, EmailAddress, EmailProfile
+from .models import Introduction
 
 
-class EmailAddressResource(ModelResource):
+class IntroductionResource(ModelResource):
     class Meta:
-        queryset = EmailAddress.objects.all()
+        queryset = Introduction.objects.all()
         always_return_data = True
-        list_allowed_methods = []
 
-class EmailProfileResource(ModelResource):
-    class Meta:
-        queryset = EmailProfile.objects.all()
-        always_return_data = True
-        list_allowed_methods = []
-
-
-class RawEmailResource(ModelResource):
-    class Meta:
-        queryset = RawEmail.objects.all()
-        always_return_data = True
-        list_allowed_methods = []
+    def get_object_list(self, request):
+        return super(IntroductionResource, self).get_object_list(request).filter(connector=request.user)
